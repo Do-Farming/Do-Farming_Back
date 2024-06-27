@@ -1,7 +1,9 @@
 package com.hana.api.group.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.hana.api.challenge.entity.wakeupChallenge;
 import com.hana.api.groupMember.entity.GroupMember;
+import com.hana.api.user.entity.User;
 import com.hana.common.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
@@ -39,6 +41,9 @@ public class Group extends BaseEntity {
     @Column(nullable = false)
     private Boolean isPublic;
 
+    @Column(nullable = false)
+    private String wakeupTime;
+
     @OneToMany(mappedBy = "group", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @ToString.Exclude
     private List<GroupMember> groupMembers;
@@ -46,4 +51,8 @@ public class Group extends BaseEntity {
     @OneToMany(mappedBy = "group", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @ToString.Exclude
     private List<wakeupChallenge> wakeupChallenges;
+
+    @ManyToOne
+    @JoinColumn(name = "user_code")
+    private User user;
 }
