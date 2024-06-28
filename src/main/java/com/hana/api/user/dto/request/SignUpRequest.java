@@ -27,7 +27,7 @@ public class SignUpRequest {
                 .name(name)
                 .password(password)
                 .phoneNumber(phoneNumber)
-                .status("0")
+                .status(0)
                 .identificationNumber(identificationNumber).build();
     }
 }

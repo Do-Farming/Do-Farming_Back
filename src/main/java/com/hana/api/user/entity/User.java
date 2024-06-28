@@ -39,7 +39,7 @@ public class User extends BaseEntity {
     private String identificationNumber;
 
     @Column(nullable = false)
-    private String status;
+    private int status;
 
     @Column(columnDefinition = "BINARY(16)", name = "device_id")
     private UUID deviceId;
