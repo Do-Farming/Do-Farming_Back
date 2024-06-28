@@ -3,6 +3,7 @@ package com.hana.api.group.controller;
 
 import com.hana.api.auth.Auth;
 import com.hana.api.group.dto.GroupRequestDto;
+import com.hana.api.group.dto.GroupResponseDto;
 import com.hana.api.group.service.GroupService;
 import com.hana.common.config.BaseException;
 import com.hana.common.config.BaseResponse;
@@ -10,11 +11,9 @@ import com.hana.common.config.BaseResponseStatus;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -53,5 +52,11 @@ public class GroupController {
         } else {
             throw new BaseException(BaseResponseStatus.SYSTEM_ERROR);
         }
+    }
+
+    @Operation(summary = "그룹 목록 조회")
+    @GetMapping("/list")
+    public BaseResponse.SuccessResult<List<GroupResponseDto.GetGroupListRes>> groupList() {
+        return BaseResponse.success(groupService.groupList());
     }
 }

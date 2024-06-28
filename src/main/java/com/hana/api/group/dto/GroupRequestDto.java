@@ -1,7 +1,5 @@
 package com.hana.api.group.dto;
 
-import com.hana.api.group.entity.Group;
-import com.hana.api.user.entity.User;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.*;
 

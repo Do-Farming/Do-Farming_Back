@@ -49,6 +49,10 @@ public class Group extends BaseEntity {
     @ColumnDefault("0")
     private Integer status;
 
+    @Transient
+    @Setter
+    private Integer participantNumber; // 참여 인원 수
+
     @OneToMany(mappedBy = "group", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @ToString.Exclude
     private List<GroupMember> groupMembers;
