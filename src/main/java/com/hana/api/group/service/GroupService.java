@@ -3,6 +3,9 @@ package com.hana.api.group.service;
 import com.hana.api.group.dto.GroupRequestDto;
 import com.hana.api.group.entity.Group;
 import com.hana.api.group.repository.GroupRepository;
+import com.hana.api.groupMember.entity.GroupMember;
+import com.hana.api.groupMember.entity.GroupMemberPK;
+import com.hana.api.groupMember.repository.GroupMemberRepository;
 import com.hana.api.user.entity.User;
 import com.hana.common.config.BaseException;
 import com.hana.common.config.BaseResponseStatus;
@@ -22,6 +25,7 @@ import java.util.UUID;
 public class GroupService {
     private final UserRepository userRepository;
     private final GroupRepository groupRepository;
+    private final GroupMemberRepository groupMemberRepository;
 
 
     public Group createGroup(GroupRequestDto.GroupCreateReq request, UUID userCode) {
@@ -37,6 +41,7 @@ public class GroupService {
                 .wakeupTime(request.getWakeupTime())
                 .isPublic(request.getIsPublic())
                 .creatorName(user.getName())
+                .status(0)
                 .build();
 
         groupRepository.save(group);
