@@ -48,4 +48,33 @@ public class GroupService {
         return group;
     }
 
+    public Integer joinGroup(GroupRequestDto.GroupJoinReq request, UUID userCode) {
+        try {
+            User user = userRepository.findByUserCode(userCode)
+                    .orElseThrow(() -> new BaseException(BaseResponseStatus.USERS_EMPTY_USER_ID));
+
+            Group group = groupRepository.findById(request.getGroupId())
+                    .orElseThrow(() -> new BaseException(BaseResponseStatus.GROUPS_EMPTY_GROUP_ID));
+
+            if (group.getStatus() == 0) {
+                // 기본키 객체 생성
+                GroupMemberPK groupMemberPK = new GroupMemberPK(request.getGroupId(), userCode);
+
+                // 그룹 멤버 객체 생성
+                GroupMember groupMember = GroupMember.builder()
+                        .id(groupMemberPK)
+                        .group(group)
+                        .user(user)
+                        .build();
+                groupMemberRepository.save(groupMember);
+                return 1;
+            } else {
+                return 0;
+            }
+        } catch (BaseException e) {
+            // 예외 처리
+            throw new BaseException(BaseResponseStatus.SYSTEM_ERROR);
+        }
+    }
+
 }
