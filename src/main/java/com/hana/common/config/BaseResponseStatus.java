@@ -43,6 +43,8 @@ public enum BaseResponseStatus {
     // users
     USERS_EMPTY_USER_ID(false, 2010, "유저 아이디 값을 확인해주세요."),
 
+
+
     // account (3000 ~ 3999)
     INVALID_ACCOUNT_PASSWORD(false, 3000, "계좌 비밀번호가 일치하지 않습니다."),
     ACCOUNTS_EMPTY_ACCOUNT_ID(false,  3200, "계좌 아이디 값을 확인해주세요."),
@@ -85,7 +87,12 @@ public enum BaseResponseStatus {
 
     // reservation (15000 ~ 15999)
     INVALID_WORK_TYPE(false, 15001, "사용할 수 없는 상담 유형입니다."),
-    NOT_FOUND_CONSULTING_ID(false, 15002, "존재하지 않는 상담 아이디입니다.");
+    NOT_FOUND_CONSULTING_ID(false, 15002, "존재하지 않는 상담 아이디입니다."),
+
+    // groups (16000 ~ 16999)
+    GROUPS_EMPTY_GROUP_ID(false, 16001, "존재하지 않는 그룹 아이디입니다."),
+    GROUPS_ALREADY_START(false, 16002, "이미 챌린징이 진행중인 그룹입니다.");
+
 
     private final boolean isSuccess;
     private final int code;
