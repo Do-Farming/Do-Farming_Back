@@ -7,6 +7,7 @@ import com.hana.api.user.entity.User;
 import com.hana.common.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
 
 import java.util.List;
 
@@ -43,6 +44,10 @@ public class Group extends BaseEntity {
 
     @Column(nullable = false)
     private String wakeupTime;
+
+    @Column(nullable = false)
+    @ColumnDefault("0")
+    private Integer status;
 
     @OneToMany(mappedBy = "group", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @ToString.Exclude
