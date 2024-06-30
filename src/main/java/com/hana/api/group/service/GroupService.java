@@ -59,27 +59,29 @@ public class GroupService {
             Group group = groupRepository.findById(request.getGroupId())
                     .orElseThrow(() -> new BaseException(BaseResponseStatus.GROUPS_EMPTY_GROUP_ID));
 
-            if (group.getStatus() == 0) {
-                // 기본키 객체 생성
-                GroupMemberPK groupMemberPK = new GroupMemberPK(request.getGroupId(), userCode);
-
-                // 그룹 멤버 객체 생성
-                GroupMember groupMember = GroupMember.builder()
-                        .id(groupMemberPK)
-                        .group(group)
-                        .user(user)
-                        .build();
-                groupMemberRepository.save(groupMember);
-                return 1;
-            } else {
+            if (group.getStatus() != 0) {
                 return 0;
             }
+
+            boolean isAlreadyMember = groupMemberRepository.isAlreadyJoin(request.getGroupId(), userCode);
+            if (isAlreadyMember) {
+                return 2;
+            }
+
+            // 중복 가입이 없으면 그룹 멤버 추가
+            GroupMemberPK groupMemberPK = new GroupMemberPK(request.getGroupId(), userCode);
+            GroupMember groupMember = GroupMember.builder()
+                    .id(groupMemberPK)
+                    .group(group)
+                    .user(user)
+                    .build();
+            groupMemberRepository.save(groupMember);
+            return 1;
+
         } catch (BaseException e) {
-            // 예외 처리
-            throw new BaseException(BaseResponseStatus.SYSTEM_ERROR);
+            return 2;
         }
     }
-
 
     public List<GroupResponseDto.GetGroupListRes> groupList() {
         List<Group> groups = groupRepository.findAll();

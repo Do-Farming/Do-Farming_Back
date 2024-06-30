@@ -4,6 +4,7 @@ package com.hana.api.group.controller;
 import com.hana.api.auth.Auth;
 import com.hana.api.group.dto.GroupRequestDto;
 import com.hana.api.group.dto.GroupResponseDto;
+import com.hana.api.group.entity.Group;
 import com.hana.api.group.service.GroupService;
 import com.hana.common.config.BaseException;
 import com.hana.common.config.BaseResponse;
@@ -49,6 +50,8 @@ public class GroupController {
             return BaseResponse.success("챌린지 그룹 가입 성공");
         } else if (result == 0) {
             throw new BaseException(BaseResponseStatus.GROUPS_ALREADY_START);
+        } else if (result == 2) {
+            throw new BaseException(BaseResponseStatus.GROUPS_ALREADY_MEMBER);
         } else {
             throw new BaseException(BaseResponseStatus.SYSTEM_ERROR);
         }
