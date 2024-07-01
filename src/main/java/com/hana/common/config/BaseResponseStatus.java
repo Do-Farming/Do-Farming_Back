@@ -92,7 +92,8 @@ public enum BaseResponseStatus {
     // groups (16000 ~ 16999)
     GROUPS_EMPTY_GROUP_ID(false, 16001, "존재하지 않는 그룹 아이디입니다."),
     GROUPS_ALREADY_START(false, 16002, "이미 챌린징이 진행중인 그룹입니다."),
-    GROUPS_ALREADY_MEMBER(false, 16003, "이미 가입된 회원입니다.");
+    GROUPS_ALREADY_MEMBER(false, 16003, "이미 가입된 회원입니다."),
+    GROUPS_UNAUTHORIZED(false, 16004, "방장만 삭제할 수 있습니다.");
 
 
     private final boolean isSuccess;
