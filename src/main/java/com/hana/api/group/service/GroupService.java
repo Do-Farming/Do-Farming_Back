@@ -109,4 +109,14 @@ public class GroupService {
         return GroupResponseDto.GetGroupInfoRes.from(group, participantNumber, isAdmin, isJoined, group.getGroupMembers());
     }
 
+    public void groupDelete(long groupId, UUID userCode) {
+        Group group = groupRepository.findById(groupId).orElseThrow(() -> new BaseException(BaseResponseStatus.GROUPS_EMPTY_GROUP_ID));
+        User user = userRepository.findByUserCode(userCode).orElseThrow(() -> new BaseException(BaseResponseStatus.USERS_EMPTY_USER_ID));
+
+        if (user.getName().equals(group.getCreatorName())) {
+            groupRepository.deleteById(groupId);
+        } else {
+            throw new BaseException(BaseResponseStatus.GROUPS_UNAUTHORIZED);
+        }
+    }
 }

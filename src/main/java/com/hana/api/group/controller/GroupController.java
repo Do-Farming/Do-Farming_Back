@@ -73,4 +73,12 @@ public class GroupController {
         GroupResponseDto.GetGroupInfoRes groupInfo = groupService.groupDetail(id, uuid);
         return BaseResponse.success(groupInfo);
     }
+
+    @Operation(summary = "그룹 삭제")
+    @DeleteMapping("/delete")
+    public BaseResponse.SuccessResult<String> groupDelete(@RequestBody GroupRequestDto.GroupDeleteReq request, @Auth String userCode) {
+        UUID uuid = UUID.fromString(userCode);
+        groupService.groupDelete(request.getGroupId(), uuid);
+        return BaseResponse.success("챌린지 그룹 삭제 성공");
+    }
 }
