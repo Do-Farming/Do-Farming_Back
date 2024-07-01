@@ -10,6 +10,7 @@ import com.hana.api.groupMember.repository.GroupMemberRepository;
 import com.hana.api.user.entity.User;
 import com.hana.common.config.BaseException;
 import com.hana.common.config.BaseResponseStatus;
+import com.hana.common.scheduler.DynamicSchedulerService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,6 +30,8 @@ public class GroupService {
     private final UserRepository userRepository;
     private final GroupRepository groupRepository;
     private final GroupMemberRepository groupMemberRepository;
+    private final DynamicSchedulerService dynamicSchedulerService;
+
 
 
     public Group createGroup(GroupRequestDto.GroupCreateReq request, UUID userCode) {
@@ -48,6 +51,14 @@ public class GroupService {
                 .build();
 
         groupRepository.save(group);
+
+        GroupMemberPK groupMemberPK = new GroupMemberPK(group.getId(), userCode);
+        GroupMember groupMember = GroupMember.builder()
+                .id(groupMemberPK)
+                .group(group)
+                .user(user)
+                .build();
+        groupMemberRepository.save(groupMember);
         return group;
     }
 
