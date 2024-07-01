@@ -4,12 +4,12 @@ package com.hana.api.group.controller;
 import com.hana.api.auth.Auth;
 import com.hana.api.group.dto.GroupRequestDto;
 import com.hana.api.group.dto.GroupResponseDto;
-import com.hana.api.group.entity.Group;
 import com.hana.api.group.service.GroupService;
 import com.hana.common.config.BaseException;
 import com.hana.common.config.BaseResponse;
 import com.hana.common.config.BaseResponseStatus;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -61,5 +61,16 @@ public class GroupController {
     @GetMapping("/list")
     public BaseResponse.SuccessResult<List<GroupResponseDto.GetGroupListRes>> groupList() {
         return BaseResponse.success(groupService.groupList());
+    }
+
+    @Operation(summary = "그룹 상세 조회")
+    @GetMapping("")
+    public BaseResponse.SuccessResult<GroupResponseDto.GetGroupInfoRes> groupDetail(@RequestParam long id,
+        @Parameter(hidden = true)
+        @Auth String userCode
+    ) {
+        UUID uuid = UUID.fromString(userCode);
+        GroupResponseDto.GetGroupInfoRes groupInfo = groupService.groupDetail(id, uuid);
+        return BaseResponse.success(groupInfo);
     }
 }
