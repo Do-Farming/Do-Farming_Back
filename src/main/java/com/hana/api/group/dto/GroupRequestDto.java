@@ -31,4 +31,12 @@ public class GroupRequestDto {
         private Long groupId;
     }
 
+    @Builder
+    @Getter
+    @NoArgsConstructor(access = AccessLevel.PROTECTED)
+    @AllArgsConstructor
+    public static class GroupDeleteReq {
+        private int groupId;
+    }
+
 }
