@@ -87,6 +87,16 @@ public class GroupService {
                     .user(user)
                     .build();
             groupMemberRepository.save(groupMember);
+
+            int participantNumber = groupMemberRepository.countByGroupId(group.getId());
+
+            if (group.getGroupNumber() == participantNumber) {
+                group.setStatus(1);
+                groupRepository.save(group);
+
+                // 차주 월요일에 status를 2로 바꾸는 스케줄링
+                dynamicSchedulerService.scheduleStatusUpdate(group.getId());
+            }
             return 1;
 
         } catch (BaseException e) {
