@@ -84,7 +84,7 @@ public class GroupService {
     }
 
     public List<GroupResponseDto.GetGroupListRes> groupList() {
-        List<Group> groups = groupRepository.findAll();
+        List<Group> groups = groupRepository.findByIsPublicTrue();
 
         return groups.stream()
                 .map(group -> {
