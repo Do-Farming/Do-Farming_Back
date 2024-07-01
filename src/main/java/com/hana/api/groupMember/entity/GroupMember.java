@@ -1,5 +1,6 @@
 package com.hana.api.groupMember.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.hana.api.group.entity.Group;
 import com.hana.api.user.entity.User;
 import com.hana.common.entity.BaseEntity;
@@ -20,6 +21,7 @@ public class GroupMember extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @MapsId("groupId")
     @JoinColumn(name = "group_id", referencedColumnName = "group_id")
+    @JsonBackReference
     private Group group;
 
     @ManyToOne(fetch = FetchType.LAZY)

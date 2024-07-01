@@ -1,6 +1,6 @@
 package com.hana.api.group.entity;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.hana.api.challenge.entity.wakeupChallenge;
 import com.hana.api.groupMember.entity.GroupMember;
 import com.hana.api.user.entity.User;
@@ -55,6 +55,7 @@ public class Group extends BaseEntity {
 
     @OneToMany(mappedBy = "group", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @ToString.Exclude
+    @JsonManagedReference
     private List<GroupMember> groupMembers;
 
     @OneToMany(mappedBy = "group", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
