@@ -40,8 +40,8 @@ public class SwaggerConfig {
                 .addOpenApiCustomizer(
                         openApi -> openApi.setInfo(
                                 new Info()
-                                        .title("Hana Heritage Api") // API 제목
-                                        .description("👨🏻‍🦳 시니어용 노후관리 및 유산상속을 위한 유언대용신탁 및 개인뱅킹 시스템") // API 설명
+                                        .title("Dofarming Api") // API 제목
+                                        .description("갓생 경쟁을 통해 도파민을 파밍해라 Do! farming") // API 설명
                                         .version("1.0.0") // API 버전
                         )
                 )
