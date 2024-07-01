@@ -20,7 +20,7 @@ public class GptController {
     private OpenAiService openAiService;
 
     @GetMapping("/chat")
-    public Mono<Map<String, Object>> chat(@RequestParam String prompt,@Parameter(hidden = true) @Auth String userCode) {
-        return openAiService.getChatResponse(prompt, userCode);
+    public Mono<Map<String, Object>> chat(@Parameter(hidden = true) @Auth String userCode, @RequestParam String prompt) {
+        return openAiService.getChatResponse(userCode, prompt);
     }
 }
