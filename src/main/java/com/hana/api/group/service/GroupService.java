@@ -93,4 +93,20 @@ public class GroupService {
                 })
                 .collect(Collectors.toList());
     }
+
+    public GroupResponseDto.GetGroupInfoRes groupDetail(long groupId, UUID userCode) {
+        Group group = groupRepository.findById(groupId)
+                .orElseThrow(() -> new BaseException(BaseResponseStatus.GROUPS_EMPTY_GROUP_ID));
+
+        int participantNumber = groupMemberRepository.countByGroupId(group.getId());
+        boolean isJoined = groupMemberRepository.isAlreadyJoin(groupId, userCode);
+
+        // 사용자가 그룹의 생성자인지 여부 확인
+        User user = userRepository.findByUserCode(userCode)
+                .orElseThrow(() -> new BaseException(BaseResponseStatus.USERS_EMPTY_USER_ID));
+        boolean isAdmin = group.getCreatorName().equals(user.getName());
+
+        return GroupResponseDto.GetGroupInfoRes.from(group, participantNumber, isAdmin, isJoined, group.getGroupMembers());
+    }
+
 }
