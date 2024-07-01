@@ -3,9 +3,9 @@ package com.hana.api.group.repository;
 import com.hana.api.group.entity.Group;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.util.Optional;
+import java.util.List;
 
 public interface GroupRepository extends JpaRepository<Group, Long> {
-    Optional<Group> findById(Long groupId);
+    List<Group> findByIsPublicTrue();
 
 }
