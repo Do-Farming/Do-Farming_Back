@@ -10,13 +10,13 @@ import org.springframework.stereotype.Component;
 
 @RequiredArgsConstructor
 @Component
-public class RefreshCardListDataTasklet implements Tasklet {
+public class UpdateCardListDataTasklet implements Tasklet {
 
     private final CardService cardService;
 
     @Override
     public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) throws Exception {
-        cardService.refreshCardListData();
+        cardService.updateCardListData();
         return RepeatStatus.FINISHED;
     }
 }

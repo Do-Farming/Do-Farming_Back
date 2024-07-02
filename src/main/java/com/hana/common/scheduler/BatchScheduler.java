@@ -1,7 +1,6 @@
 package com.hana.common.scheduler;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.flogger.Flogger;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.*;
 import org.springframework.batch.core.configuration.JobRegistry;
@@ -69,9 +68,9 @@ public class BatchScheduler {
 
     // '카드고릴라'에서 카드 리스트 정보를 불러와 DB에 갱신
     @Scheduled(cron = "0 0 0 * * ?") // 매일 자정에 실행
-    public void runRefreshCardListDataJob() {
+    public void runUpdateCardListDataJob() {
         try {
-            Job job = jobRegistry.getJob("refreshCardListDataJob");
+            Job job = jobRegistry.getJob("updateCardListDataJob");
             JobParametersBuilder jobParam = new JobParametersBuilder()
                     .addLocalDateTime("runAt", LocalDateTime.now());
 

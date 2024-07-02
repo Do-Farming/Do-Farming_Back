@@ -22,7 +22,7 @@ public class CardService {
     private final ObjectMapper objectMapper;
 
     @Transactional
-    public void refreshCardListData() {
+    public void updateCardListData() {
         cardRepository.deleteAll();
 
         List<Card> cardList = new ArrayList<>();

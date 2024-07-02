@@ -14,23 +14,23 @@ import org.springframework.transaction.PlatformTransactionManager;
 @Configuration
 @EnableBatchProcessing
 @RequiredArgsConstructor
-public class RefreshCardListDataJobConfig {
+public class UpdateCardListDataJobConfig {
 
     private final JobRepository jobRepository;
     private final PlatformTransactionManager transactionManager;
-    private final RefreshCardListDataTasklet refreshCardListDataTasklet;
+    private final UpdateCardListDataTasklet updateCardListDataTasklet;
 
     @Bean
-    public Job refreshCardListDataJob() {
-        return new JobBuilder("refreshCardListDataJob", jobRepository)
-                .start(refreshCardListDataStep())
+    public Job updateCardListDataJob() {
+        return new JobBuilder("updateCardListDataJob", jobRepository)
+                .start(updateCardListDataStep())
                 .build();
     }
 
     @Bean
-    public Step refreshCardListDataStep() {
-        return new StepBuilder("refreshCardListDataStep", jobRepository)
-                .tasklet(refreshCardListDataTasklet, transactionManager)
+    public Step updateCardListDataStep() {
+        return new StepBuilder("updateCardListDataStep", jobRepository)
+                .tasklet(updateCardListDataTasklet, transactionManager)
                 .build();
     }
 }
