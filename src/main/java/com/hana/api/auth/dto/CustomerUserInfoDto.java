@@ -1,6 +1,5 @@
 package com.hana.api.auth.dto;
 
-import jakarta.annotation.Nullable;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.Getter;
 import lombok.Setter;
