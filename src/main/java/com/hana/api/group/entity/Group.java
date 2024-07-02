@@ -47,7 +47,8 @@ public class Group extends BaseEntity {
 
     @Column(nullable = false)
     @ColumnDefault("0")
-    private Integer status;
+    @Setter
+    private Integer status; // status 0 이면 진행 전, status 1 이면 대기 중, status 2 이면 진행 중
 
     @Transient
     @Setter
