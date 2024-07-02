@@ -1,11 +1,8 @@
 package com.hana.api.card.entity;
 
-
-import com.hana.api.depositsProduct.entity.DepositsType;
 import com.hana.common.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
-
 
 @Entity(name = "card")
 @Table(name = "card")

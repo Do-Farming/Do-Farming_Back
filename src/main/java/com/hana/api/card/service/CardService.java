@@ -4,28 +4,14 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hana.api.card.entity.Card;
 import com.hana.api.card.repository.CardRepository;
-import com.hana.api.depositsProduct.dto.PreferenceInfo;
-import com.hana.api.depositsProduct.dto.response.DepositsProductResponse;
-import com.hana.api.depositsProduct.dto.response.GetListDepositsProductResponse;
-import com.hana.api.depositsProduct.entity.DepositsProduct;
-import com.hana.api.depositsProduct.repository.DepositsProductRepository;
-import com.hana.api.depositsProduct.util.DepositsProductUtil;
-import com.hana.common.aop.Preference;
-import com.hana.common.config.*;
-import jakarta.persistence.criteria.CriteriaBuilder.In;
 import java.time.LocalDate;
 import java.util.*;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
-
-import java.util.stream.Collectors;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
