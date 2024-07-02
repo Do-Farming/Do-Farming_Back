@@ -1,6 +1,8 @@
 package com.hana.common.scheduler;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.flogger.Flogger;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.*;
 import org.springframework.batch.core.configuration.JobRegistry;
 import org.springframework.batch.core.configuration.support.JobRegistryBeanPostProcessor;
@@ -16,6 +18,7 @@ import org.springframework.stereotype.Component;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+@Slf4j
 @RequiredArgsConstructor
 @Component
 public class BatchScheduler {
@@ -46,12 +49,10 @@ public class BatchScheduler {
         }
     }
 
-    // 자동이체 스케줄러
-    //cron="0/10 * * * * *"
+    // 자동이체
     @Scheduled(cron = "0 9 0 * * ?")  // 매일 9시 실행
     public void runAutoTranferJob() {
         LocalDate today = LocalDate.now();
-        //int day = today.getDayOfMonth();
 
         try {
             Job job = jobRegistry.getJob("autoTransferJob"); // job 이름
@@ -64,6 +65,21 @@ public class BatchScheduler {
                  JobParametersInvalidException | JobRestartException e) {
             throw new RuntimeException(e);
         }
-
     }
+
+    // '카드고릴라'에서 카드 리스트 정보를 불러와 DB에 갱신
+    @Scheduled(cron = "0 0 0 * * ?") // 매일 자정에 실행
+    public void runRefreshCardListDataJob() {
+        try {
+            Job job = jobRegistry.getJob("refreshCardListDataJob");
+            JobParametersBuilder jobParam = new JobParametersBuilder()
+                    .addLocalDateTime("runAt", LocalDateTime.now());
+
+            jobLauncher.run(job, jobParam.toJobParameters());
+        } catch (NoSuchJobException | JobInstanceAlreadyCompleteException | JobExecutionAlreadyRunningException |
+                 JobParametersInvalidException | JobRestartException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 }
