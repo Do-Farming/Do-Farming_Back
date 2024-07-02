@@ -1,8 +1,8 @@
 package com.hana.api.gpt.service;
 
-import com.hana.api.auth.Auth;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
@@ -28,6 +28,46 @@ public class OpenAiService {
         this.redisTemplate = redisTemplate;
     }
 
+    // Assistant 및 벡터 스토어 설정
+    public void setupAssistantAndVectorStore() {
+        // 벡터 스토어 ID 및 파일 ID 목록
+        String vectorStoreId = "vs_Pojsve0wA3AZ2fRIR3dvpfJS";
+        List<String> fileIds = List.of("file-Q0dEBVOgLlhyvvsN73t8xvgb");
+
+        // 벡터 스토어에 파일 추가
+        webClient.post()
+                .uri("/beta/vector_stores/file_batches")
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("Authorization", "Bearer " + apiKey)
+                .bodyValue(Map.of("vector_store_id", vectorStoreId, "file_ids", fileIds))
+                .retrieve()
+                .bodyToMono(Map.class)
+                .doOnNext(response -> {
+                    System.out.println("File Batch Status: " + response.get("status"));
+                    System.out.println("File Counts: " + response.get("file_counts"));
+                })
+                .block();
+
+        // Assistant 생성 및 벡터 스토어 추가
+        webClient.post()
+                .uri("/beta/assistants")
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("Authorization", "Bearer " + apiKey)
+                .bodyValue(Map.of(
+                        "name", "HanaBankAssistant",
+                        "instructions", "You provide information about Hana Bank's products based on the provided files.",
+                        "model", "gpt-4o",
+                        "tools", List.of(Map.of("type", "file_search", "vector_store_ids", List.of(vectorStoreId)))
+                ))
+                .retrieve()
+                .bodyToMono(Map.class)
+                .doOnNext(response -> {
+                    System.out.println("Assistant created with ID: " + response.get("id"));
+                })
+                .block();
+    }
+
+    // ChatGPT 대화 응답 메소드
     public Mono<Map<String, Object>> getChatResponse(String userCode, String prompt) {
         String cacheKey = "chat:" + userCode + ":" + prompt;
         // 캐시된 응답을 먼저 확인
@@ -64,7 +104,7 @@ public class OpenAiService {
                     conversation.add(assistantMessage);
 
                     // 대화 저장
-                    redisTemplate.opsForValue().set(conversationCacheKey, conversation, Duration.ofHours(1));
+                    redisTemplate.opsForValue().set(conversationCacheKey, conversation, Duration.ofMinutes(15));
                     // 응답 캐시 저장
                     redisTemplate.opsForValue().set(cacheKey, response, Duration.ofHours(1));
                 })
@@ -79,6 +119,25 @@ public class OpenAiService {
                 });
     }
 
+    // DALL-E 이미지 생성 메소드
+    public Mono<Map> generateImage(String prompt) {
+        String cacheKey = "dalle:" + prompt;
+        Map<String, Object> cachedResponse = (Map<String, Object>) redisTemplate.opsForValue().get(cacheKey);
+
+        if (cachedResponse != null) {
+            return Mono.just(cachedResponse);
+        }
+
+        return this.webClient.post()
+                .uri("/images/generations")
+                .header("Authorization", "Bearer " + apiKey)
+                .header("Content-Type", "application/json")
+                .bodyValue(Map.of("prompt", prompt, "size", "1024x1024"))
+                .retrieve()
+                .bodyToMono(Map.class)
+                .doOnNext(response -> redisTemplate.opsForValue().set(cacheKey, response, Duration.ofHours(1)));
+    }
+
     private Map<String, String> createMessage(String role, String content) {
         Map<String, String> message = new HashMap<>();
         message.put("role", role);
@@ -87,7 +146,7 @@ public class OpenAiService {
     }
 
     private static class ChatRequest {
-        private final String model = "gpt-3.5-turbo";
+        private final String model = "gpt-4o";  // 모델 이름 변경
         private final List<Map<String, String>> messages;
 
         public ChatRequest(List<Map<String, String>> messages) {

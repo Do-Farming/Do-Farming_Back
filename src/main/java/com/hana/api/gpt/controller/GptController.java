@@ -23,4 +23,10 @@ public class GptController {
     public Mono<Map<String, Object>> chat(@Parameter(hidden = true) @Auth String userCode, @RequestParam String prompt) {
         return openAiService.getChatResponse(userCode, prompt);
     }
+
+    @GetMapping("/generate-image")
+    public Mono<Map> generateImage(@RequestParam String prompt) {
+        System.out.println("called");
+        return openAiService.generateImage(prompt);
+    }
 }
