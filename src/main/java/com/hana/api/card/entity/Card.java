@@ -13,17 +13,25 @@ import lombok.*;
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 @Builder
 @Getter
+@ToString
 public class Card extends BaseEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "card_id")
-    private Long id;
-    private String cardName;
-    private String ranking;
-    private String type;
-    private String benefit;
-    private String img;
-    private String corp;
-    private String annualFee;
+    private Long id; // idx
 
+    private String cardName; // name
+
+    private String ranking; // ranking
+
+    private String type; // card_gb (CRD, CHK)
+
+    @Column(columnDefinition = "TEXT")
+    private String benefit; // top_benefit
+
+    private String img; // card_img
+
+    @Column(columnDefinition = "TEXT")
+    private String corp; // corp
+
+    private String annualFee; // annual_fee_basic
  }
