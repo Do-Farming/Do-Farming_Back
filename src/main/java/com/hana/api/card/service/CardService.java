@@ -78,4 +78,11 @@ public class CardService {
         return cardList;
     }
 
+    public List<Card> getCardList(String type, int count) {
+        List<Card> allCardList = cardRepository.findCardByType(type);
+        Collections.shuffle(allCardList);
+        // 주어진 count만큼의 서브 리스트를 반환하거나, count가 리스트 크기를 넘으면 전체 리스트를 반환
+        return allCardList.subList(0, Math.min(count, allCardList.size()));
+    }
+
 }
