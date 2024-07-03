@@ -10,7 +10,10 @@ import org.springframework.batch.core.launch.NoSuchJobException;
 import org.springframework.batch.core.repository.JobExecutionAlreadyRunningException;
 import org.springframework.batch.core.repository.JobInstanceAlreadyCompleteException;
 import org.springframework.batch.core.repository.JobRestartException;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Conditional;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -26,6 +29,7 @@ public class BatchScheduler {
     private final JobRegistry jobRegistry;
 
     @Bean
+    @ConditionalOnMissingBean(name = "jobRegistryBeanPostProcessor")
     public JobRegistryBeanPostProcessor jobRegistryBeanPostProcessor() {
         JobRegistryBeanPostProcessor jobProcessor = new JobRegistryBeanPostProcessor();
         jobProcessor.setJobRegistry(jobRegistry);
@@ -80,5 +84,16 @@ public class BatchScheduler {
             throw new RuntimeException(e);
         }
     }
-
+    @Scheduled(cron = "0 0 12 * * ?") // 매일 정오에 실행
+    public void insert() {
+        try {
+            Job job = jobRegistry.getJob("insertDailyChallengeJob");
+            JobParametersBuilder jobParam = new JobParametersBuilder()
+                    .addLocalDateTime("runAt", LocalDateTime.now());
+            jobLauncher.run(job, jobParam.toJobParameters());
+        } catch (NoSuchJobException | JobInstanceAlreadyCompleteException | JobExecutionAlreadyRunningException |
+                 JobParametersInvalidException | JobRestartException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }
