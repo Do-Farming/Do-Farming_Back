@@ -21,7 +21,6 @@ public class ChallengeRecord extends BaseEntity {
 
     @Column(nullable = false)
     private LocalDateTime challengeDate;
-    // 0: 만보기, 1: 기상, 2: 퀴즈
 
     @Column(nullable = false)
     private int challengeType;

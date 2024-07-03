@@ -9,6 +9,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity(name = "group")
@@ -44,6 +45,11 @@ public class Group extends BaseEntity {
 
     @Column(nullable = false)
     private String wakeupTime;
+
+    @Column
+    private LocalDateTime startedAt;
+    @Column
+    private LocalDateTime endeddAt;
 
     @Column(nullable = false)
     @ColumnDefault("0")
