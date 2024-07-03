@@ -170,4 +170,8 @@ public class GroupService {
             throw new BaseException(BaseResponseStatus.GROUPS_UNAUTHORIZED);
         }
     }
+
+    public List<User> getUsersByGroupId(Long groupId) {
+        return groupRepository.findUsersByGroupId(groupId);
+    }
 }
