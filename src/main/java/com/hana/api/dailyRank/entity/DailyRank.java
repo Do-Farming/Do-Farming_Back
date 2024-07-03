@@ -5,6 +5,7 @@ import com.hana.api.user.entity.User;
 import com.hana.common.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 
@@ -15,6 +16,7 @@ import java.time.LocalDateTime;
 @Builder
 @ToString
 @Getter
+@Setter
 public class DailyRank extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
