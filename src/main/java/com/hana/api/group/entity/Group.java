@@ -1,7 +1,7 @@
 package com.hana.api.group.entity;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.hana.api.challenge.entity.wakeupChallenge;
+import com.hana.api.challenge.wakeup.entity.WakeupChallenge;
 import com.hana.api.groupMember.entity.GroupMember;
 import com.hana.api.user.entity.User;
 import com.hana.common.entity.BaseEntity;
@@ -67,7 +67,7 @@ public class Group extends BaseEntity {
 
     @OneToMany(mappedBy = "group", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @ToString.Exclude
-    private List<wakeupChallenge> wakeupChallenges;
+    private List<WakeupChallenge> wakeupChallenges;
 
     @ManyToOne
     @JoinColumn(name = "user_code")
