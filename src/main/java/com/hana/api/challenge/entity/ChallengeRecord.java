@@ -4,7 +4,7 @@ import com.hana.common.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity(name = "challenge_record")
 @Table(name = "challenge_record")
@@ -13,16 +13,16 @@ import java.time.LocalDate;
 @Builder
 @ToString
 @Getter
-public class challengeRecord extends BaseEntity {
+public class ChallengeRecord extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "challenge_record_id")
     long id;
 
     @Column(nullable = false)
-    private LocalDate challengeDate;
+    private LocalDateTime challengeDate;
+    // 0: 만보기, 1: 기상, 2: 퀴즈
 
     @Column(nullable = false)
-    private Integer challengeType;
-    // 0: 만보기, 1: 기상, 2: 퀴즈
+    private int challengeType;
 }
