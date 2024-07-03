@@ -3,9 +3,8 @@ package com.hana.api.challenge.entity;
 import com.hana.common.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
-import org.springframework.data.annotation.CreatedDate;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 @Entity(name = "challenge_record")
 @Table(name = "challenge_record")
@@ -21,8 +20,9 @@ public class challengeRecord extends BaseEntity {
     long id;
 
     @Column(nullable = false)
-    private String challengeDate;
+    private LocalDate challengeDate;
 
     @Column(nullable = false)
-    private LocalDateTime challengeType;
+    private Integer challengeType;
+    // 0: 만보기, 1: 기상, 2: 퀴즈
 }

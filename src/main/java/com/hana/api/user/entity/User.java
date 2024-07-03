@@ -1,10 +1,8 @@
 package com.hana.api.user.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.hana.api.account.entity.Account;
 import com.hana.api.challenge.entity.QuizChallenge;
-import com.hana.api.challenge.entity.wakeupChallenge;
-import com.hana.api.group.entity.Group;
+import com.hana.api.challenge.wakeup.entity.WakeupChallenge;
 import com.hana.api.groupMember.entity.GroupMember;
 import com.hana.api.weeklyRate.entity.WeeklyRate;
 import com.hana.common.entity.BaseEntity;
@@ -52,7 +50,7 @@ public class User extends BaseEntity {
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     @ToString.Exclude
-    private List<wakeupChallenge> wakeupChallenge;
+    private List<WakeupChallenge> wakeupChallenge;
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     @ToString.Exclude
