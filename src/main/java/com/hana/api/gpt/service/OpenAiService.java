@@ -131,8 +131,13 @@ public class OpenAiService {
         return this.webClient.post()
                 .uri("/images/generations")
                 .header("Authorization", "Bearer " + apiKey)
-                .header("Content-Type", "application/json")
-                .bodyValue(Map.of("prompt", prompt, "size", "1024x1024"))
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(Map.of(
+                        "prompt", prompt,
+                        "model", "dall-e-3",
+                        "size", "1024x1024",
+                        "response_format", "url"
+                ))
                 .retrieve()
                 .bodyToMono(Map.class)
                 .doOnNext(response -> redisTemplate.opsForValue().set(cacheKey, response, Duration.ofHours(1)));

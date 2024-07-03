@@ -4,10 +4,7 @@ import com.hana.api.auth.Auth;
 import com.hana.api.gpt.service.OpenAiService;
 import io.swagger.v3.oas.annotations.Parameter;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 
 import java.util.Map;
@@ -24,9 +21,9 @@ public class GptController {
         return openAiService.getChatResponse(userCode, prompt);
     }
 
-    @GetMapping("/generate-image")
-    public Mono<Map> generateImage(@RequestParam String prompt) {
-        System.out.println("called");
+    @PostMapping("/generate-image")
+    public Mono<Map> generateImage(@RequestBody Map<String, String> request) {
+        String prompt = request.get("prompt");
         return openAiService.generateImage(prompt);
     }
 }
