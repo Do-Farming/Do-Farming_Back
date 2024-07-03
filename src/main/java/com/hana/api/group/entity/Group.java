@@ -47,9 +47,12 @@ public class Group extends BaseEntity {
     private String wakeupTime;
 
     @Column
+    @Setter
     private LocalDateTime startedAt;
+
     @Column
-    private LocalDateTime endeddAt;
+    @Setter
+    private LocalDateTime endedAt;
 
     @Column(nullable = false)
     @ColumnDefault("0")

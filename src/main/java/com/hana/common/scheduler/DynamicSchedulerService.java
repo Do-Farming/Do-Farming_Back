@@ -33,10 +33,15 @@ public class DynamicSchedulerService {
                 .withMinute(0)
                 .withSecond(0);
 
+        // 차주 월요일로부터 3개월 후의 날짜 계산
+        LocalDateTime threeMonthsLater = nextMonday.plusMonths(3);
+
         // 스케줄링할 작업 정의
         Runnable task = () -> {
             Group group = groupRepository.findById(groupId).orElseThrow(() -> new BaseException(BaseResponseStatus.GROUPS_EMPTY_GROUP_ID));
             group.setStatus(2);
+            group.setStartedAt(nextMonday);
+            group.setEndedAt(threeMonthsLater);
             groupRepository.save(group);
         };
 
