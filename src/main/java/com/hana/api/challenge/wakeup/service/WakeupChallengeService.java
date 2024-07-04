@@ -85,16 +85,4 @@ public class WakeupChallengeService {
         return wakeupTimes;
     }
 
-//    public void deleteWakeupCertificate(UUID userCode) {
-//        User user = userRepository.findByUserCode(userCode)
-//                .orElseThrow(() -> new BaseException(BaseResponseStatus.USERS_EMPTY_USER_ID));
-//
-//        String userId = user.getPhoneNumber();
-//        Long groupId = groupMemberRepository.findGroupByUserId(userId);
-//
-//        String key = "wakeup:certificate:group:" + groupId + ":userId:" + userId;
-//        redisTemplate.delete(key);
-//    }
-
-
 }

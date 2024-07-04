@@ -42,11 +42,4 @@ public class WakeupController {
         return BaseResponse.success(wakeupChallengeService.getWakeupTimesByGroupId(groupId));
     }
 
-//    @Operation(summary = "사용자 기상 시간 삭제")
-//    @DeleteMapping("/deleteMyWakeupTime")
-//    public BaseResponse.SuccessResult<String> deleteWakeupCertificate(@Auth String userCode) {
-//        UUID uuid = UUID.fromString(userCode);
-//        wakeupChallengeService.deleteWakeupCertificate(uuid);
-//        return BaseResponse.success("사용자 기상 시간 삭제 성공");
-//    }
 }
