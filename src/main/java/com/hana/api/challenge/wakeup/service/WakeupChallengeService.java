@@ -45,6 +45,9 @@ public class WakeupChallengeService {
                 .orElseThrow(() -> new BaseException(BaseResponseStatus.USERS_EMPTY_USER_ID));
         String userId = user.getPhoneNumber();
         Long groupId = groupMemberRepository.findGroupByUserId(userId);
+        if (groupId == null) {
+            throw new BaseException(BaseResponseStatus.GROUPS_USER_NOT_FOUND);
+        }
 
         WakeupResponseDto.WakeupCertificateDto certificate = new WakeupResponseDto.WakeupCertificateDto();
         certificate.setWakeupTime(LocalDateTime.now());
