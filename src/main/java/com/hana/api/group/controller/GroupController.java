@@ -52,6 +52,8 @@ public class GroupController {
             throw new BaseException(BaseResponseStatus.GROUPS_ALREADY_START);
         } else if (result == 2) {
             throw new BaseException(BaseResponseStatus.GROUPS_ALREADY_MEMBER);
+        } else if (result == 3) {
+            throw new BaseException(BaseResponseStatus.GROUPS_ALREADY_JOIN);
         } else {
             throw new BaseException(BaseResponseStatus.SYSTEM_ERROR);
         }

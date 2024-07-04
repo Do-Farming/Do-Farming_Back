@@ -62,46 +62,54 @@ public class GroupService {
         return group;
     }
 
+    // 사용자가 이미 그룹에 가입되어 있는지 확인
+    public boolean isUserAlreadyInAnyGroup(UUID userCode) {
+        List<GroupMember> userGroups = groupMemberRepository.findByUserUserCode(userCode);
+        return !userGroups.isEmpty(); // 사용자가 이미 그룹에 가입되어 있으면 true 반환
+    }
+
     public Integer joinGroup(GroupRequestDto.GroupJoinReq request, UUID userCode) {
-        try {
-            User user = userRepository.findByUserCode(userCode)
-                    .orElseThrow(() -> new BaseException(BaseResponseStatus.USERS_EMPTY_USER_ID));
+        User user = userRepository.findByUserCode(userCode)
+                .orElseThrow(() -> new BaseException(BaseResponseStatus.USERS_EMPTY_USER_ID));
 
-            Group group = groupRepository.findById(request.getGroupId())
-                    .orElseThrow(() -> new BaseException(BaseResponseStatus.GROUPS_EMPTY_GROUP_ID));
-
-            if (group.getStatus() != 0) {
-                return 0;
-            }
-
-            boolean isAlreadyMember = groupMemberRepository.isAlreadyJoin(request.getGroupId(), userCode);
-            if (isAlreadyMember) {
-                return 2;
-            }
-
-            // 중복 가입이 없으면 그룹 멤버 추가
-            GroupMemberPK groupMemberPK = new GroupMemberPK(request.getGroupId(), userCode);
-            GroupMember groupMember = GroupMember.builder()
-                    .id(groupMemberPK)
-                    .group(group)
-                    .user(user)
-                    .build();
-            groupMemberRepository.save(groupMember);
-
-            int participantNumber = groupMemberRepository.countByGroupId(group.getId());
-
-            if (group.getGroupNumber() == participantNumber) {
-                group.setStatus(1);
-                groupRepository.save(group);
-
-                // 차주 월요일에 status를 2로 바꾸는 스케줄링
-                dynamicSchedulerService.scheduleStatusUpdate(group.getId());
-            }
-            return 1;
-
-        } catch (BaseException e) {
-            return 2;
+        // 사용자가 도파밍 상품에 가입되어 있는지 확인
+        if (isUserAlreadyInAnyGroup(userCode)) {
+            return 3;
         }
+
+        Group group = groupRepository.findById(request.getGroupId())
+                .orElseThrow(() -> new BaseException(BaseResponseStatus.GROUPS_EMPTY_GROUP_ID));
+
+        if (group.getStatus() != 0) {
+            return 0; // 그룹이 모집 중
+        }
+
+        boolean isAlreadyMember = groupMemberRepository.isAlreadyJoin(request.getGroupId(), userCode);
+        if (isAlreadyMember) {
+            return 2; // 이미 해당 그룹에 가입된 경우
+        }
+
+        // 중복 가입이 없으면 그룹 멤버 추가
+        GroupMemberPK groupMemberPK = new GroupMemberPK(request.getGroupId(), userCode);
+        GroupMember groupMember = GroupMember.builder()
+                .id(groupMemberPK)
+                .group(group)
+                .user(user)
+                .build();
+        groupMemberRepository.save(groupMember);
+
+        int participantNumber = groupMemberRepository.countByGroupId(group.getId());
+
+        if (group.getGroupNumber() == participantNumber) {
+            group.setStatus(1);
+            groupRepository.save(group);
+
+            // 차주 월요일에 status를 2로 바꾸는 스케줄링
+            dynamicSchedulerService.scheduleStatusUpdate(group.getId());
+        }
+        return 1; // 성공적으로 그룹에 가입
+
+
     }
 
     public List<GroupResponseDto.GetGroupListRes> groupList() {
