@@ -10,6 +10,6 @@ import java.util.List;
 
 @Repository
 public interface ChallengeRecordRepository extends JpaRepository<ChallengeRecord, Long> {
-    List<ChallengeRecord> findByChallengeTypeAndChallengeDate(int challengeType, LocalDate challengeDate);
+    ChallengeRecord findByChallengeDate(LocalDate challengeDate);
 }
 
