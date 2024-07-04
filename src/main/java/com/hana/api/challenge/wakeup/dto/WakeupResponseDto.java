@@ -15,7 +15,7 @@ public class WakeupResponseDto {
     public static class WakeupCertificateDto {
         private String userId;
 
-        @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
+        @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS")
         private LocalDateTime wakeupTime;
     }
 }
