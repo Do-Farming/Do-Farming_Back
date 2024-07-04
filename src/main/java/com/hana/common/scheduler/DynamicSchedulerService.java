@@ -9,6 +9,7 @@ import org.springframework.scheduling.TaskScheduler;
 import org.springframework.stereotype.Service;
 
 import java.time.DayOfWeek;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.TemporalAdjusters;
 import java.util.Date;
@@ -40,8 +41,8 @@ public class DynamicSchedulerService {
         Runnable task = () -> {
             Group group = groupRepository.findById(groupId).orElseThrow(() -> new BaseException(BaseResponseStatus.GROUPS_EMPTY_GROUP_ID));
             group.setStatus(2);
-            group.setStartedAt(nextMonday);
-            group.setEndedAt(threeMonthsLater);
+            group.setStartedAt(LocalDate.from(nextMonday));
+            group.setEndedAt(LocalDate.from(threeMonthsLater));
             groupRepository.save(group);
         };
 

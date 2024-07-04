@@ -18,7 +18,7 @@ public class WeeklyRateService {
         LocalDate today = LocalDate.now();
         int randomNumber = (int) (Math.random() * 3);
         ChallengeRecord challengeRecord = ChallengeRecord.builder()
-                                            .challengeDate(today.plusDays(1).atStartOfDay())
+                                            .challengeDate(today.plusDays(1))
                                             .challengeType(randomNumber).build();
     }
 }
