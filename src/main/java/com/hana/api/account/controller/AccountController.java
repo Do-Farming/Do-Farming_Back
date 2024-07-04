@@ -9,6 +9,7 @@ import com.hana.api.account.service.AccountService;
 import com.hana.api.auth.Auth;
 import com.hana.common.config.BaseResponse;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -54,7 +55,7 @@ public class AccountController {
             @ApiResponse(responseCode = "1000", description = "계좌조회 성공", content = @Content(schema = @Schema(implementation = BaseResponse.SuccessResult.class))),
     })
     @GetMapping("/my")
-    public BaseResponse.SuccessResult<List<AccountCheckResponse>> myAccounts(@Auth String userCode) {
+    public BaseResponse.SuccessResult<List<AccountCheckResponse>> myAccounts(@Parameter(hidden = true) @Auth String userCode) {
 
         UUID uuid = UUID.fromString(userCode);
         return BaseResponse.success(accountService.myAccounts(uuid));
