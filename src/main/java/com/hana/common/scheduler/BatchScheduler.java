@@ -85,9 +85,23 @@ public class BatchScheduler {
         }
     }
     @Scheduled(cron = "0 0 12 * * ?") // 매일 정오에 실행
-    public void insert() {
+    public void insertDailyChallenge() {
         try {
             Job job = jobRegistry.getJob("insertDailyChallengeJob");
+            JobParametersBuilder jobParam = new JobParametersBuilder()
+                    .addLocalDateTime("runAt", LocalDateTime.now());
+            jobLauncher.run(job, jobParam.toJobParameters());
+        } catch (NoSuchJobException | JobInstanceAlreadyCompleteException | JobExecutionAlreadyRunningException |
+                 JobParametersInvalidException | JobRestartException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    //WeeklyRate 매주 일요일 밤 11시 55분에 실행
+    @Scheduled(cron = "0 55 23 ? * SUN") // 매일 정오에 실행
+    public void insertWeeklyRate() {
+        try {
+            Job job = jobRegistry.getJob("insertWeeklyRateJob");
             JobParametersBuilder jobParam = new JobParametersBuilder()
                     .addLocalDateTime("runAt", LocalDateTime.now());
             jobLauncher.run(job, jobParam.toJobParameters());
