@@ -1,14 +1,16 @@
 package com.hana.api.dailyRank.service;
 
+import com.hana.api.challenge.entity.ChallengeRecord;
+import com.hana.api.challenge.repository.ChallengeRecordRepository;
+import com.hana.api.challenge.wakeup.entity.WakeupChallenge;
+import com.hana.api.challenge.wakeup.repository.WakeupChallengeRepository;
 import com.hana.api.dailyRank.dto.RankDto;
 import com.hana.api.dailyRank.dto.Response.DailyRankResponse;
 import com.hana.api.dailyRank.entity.DailyRank;
 import com.hana.api.dailyRank.repository.DailyRankRepository;
 import com.hana.api.challenge.entity.WalkChallenge;
-import com.hana.api.challenge.entity.WakeupChallenge;
 import com.hana.api.challenge.entity.QuizChallenge;
 import com.hana.api.challenge.repository.WalkChallengeRepository;
-import com.hana.api.challenge.repository.WakeupChallengeRepository;
 import com.hana.api.challenge.repository.QuizChallengeRepository;
 import com.hana.api.group.repository.GroupRepository;
 import com.hana.api.user.entity.User;
@@ -19,8 +21,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -33,6 +35,7 @@ public class DailyRankService {
     private final WakeupChallengeRepository wakeupChallengeRepository;
     private final QuizChallengeRepository quizChallengeRepository;
     private final GroupRepository groupRepository;
+    private final ChallengeRecordRepository challengeRecordRepository;
 
     @Transactional
     public void calculateDailyRanks(Long groupId) {
@@ -50,8 +53,11 @@ public class DailyRankService {
     private void calculateWalkingRanks(Long groupId, LocalDate now, List<User> users) {
         List<WalkChallenge> records = walkChallengeRepository.findByWalkDateAndGroupId(now, groupId);
 
+        // 걸음수가 많은 순서로 정렬
+        records.sort((r1, r2) -> Integer.compare(r2.getStep(), r1.getStep()));
+
         List<DailyRank> dailyRanks = IntStream.range(0, records.size())
-                .mapToObj(index -> createDailyRank(groupId, now.atStartOfDay(), records.get(index), users.size(), index + 1))
+                .mapToObj(index -> createDailyRank(groupId, now, records.get(index), users.size(), index + 1))
                 .collect(Collectors.toList());
 
         dailyRankRepository.saveAll(dailyRanks);
@@ -60,8 +66,11 @@ public class DailyRankService {
     private void calculateWakeupRanks(Long groupId, LocalDate now, List<User> users) {
         List<WakeupChallenge> records = wakeupChallengeRepository.findByWakeupDateAndGroupId(now, groupId);
 
+        // 일어난 시간이 빠른 순서로 정렬
+        records.sort((r1, r2) -> r1.getWakeupTime().compareTo(r2.getWakeupTime()));
+
         List<DailyRank> dailyRanks = IntStream.range(0, records.size())
-                .mapToObj(index -> createDailyRank(groupId, now.atStartOfDay(), records.get(index), users.size(), index + 1))
+                .mapToObj(index -> createDailyRank(groupId, now, records.get(index), users.size(), index + 1))
                 .collect(Collectors.toList());
 
         dailyRankRepository.saveAll(dailyRanks);
@@ -70,14 +79,17 @@ public class DailyRankService {
     private void calculateQuizRanks(Long groupId, LocalDate now, List<User> users) {
         List<QuizChallenge> records = quizChallengeRepository.findByQuizDateAndGroupId(now, groupId);
 
+        // 맞춘 퀴즈가 많은 순서로 정렬
+        records.sort((r1, r2) -> Integer.compare(r2.getQuizScore(), r1.getQuizScore()));
+
         List<DailyRank> dailyRanks = IntStream.range(0, records.size())
-                .mapToObj(index -> createDailyRank(groupId, now.atStartOfDay(), records.get(index), users.size(), index + 1))
+                .mapToObj(index -> createDailyRank(groupId, now, records.get(index), users.size(), index + 1))
                 .collect(Collectors.toList());
 
         dailyRankRepository.saveAll(dailyRanks);
     }
 
-    private DailyRank createDailyRank(Long groupId, LocalDateTime now, Object record, int userCount, int rank) {
+    private DailyRank createDailyRank(Long groupId, LocalDate now, Object record, int userCount, int rank) {
         User user = null;
         double dailyRate = 0.0;
 
@@ -92,12 +104,12 @@ public class DailyRankService {
             dailyRate = calculateDailyRate(rank, userCount);
         }
 
-        double totalRate = dailyRankRepository.findLatestByUser(user.getUserCode())
+        double totalRate = dailyRankRepository.findLatestByUser(Objects.requireNonNull(user).getUserCode())
                 .map(DailyRank::getTotalRate)
-                .orElse(0.0) + dailyRate;
+                .orElse(3.5) + dailyRate;
 
         return DailyRank.builder()
-                .dailyDate(now)
+                .dailyDate(now.atStartOfDay())
                 .dailyRank(rank)
                 .dailyRate(dailyRate)
                 .totalRate(totalRate)
@@ -154,7 +166,7 @@ public class DailyRankService {
                 .map(dr -> RankDto.builder()
                         .name(dr.getUser().getName())
                         .dailyRate(String.format("%.3f", dr.getDailyRate()))
-                        .challengeType(determineChallengeType(dr.getDailyRank()))
+                        .challengeType(getChallengeType(today))
                         .challengeDate(today.toString())
                         .build())
                 .collect(Collectors.toList());
@@ -165,13 +177,8 @@ public class DailyRankService {
                 .build();
     }
 
-    private int determineChallengeType(int dailyRank) {
-        if (dailyRank <= 2) {
-            return 0; // 걷기
-        } else if (dailyRank <= 4) {
-            return 1; // 기상
-        } else {
-            return 2; // 퀴즈
-        }
+    private int getChallengeType(LocalDate date) {
+        ChallengeRecord challengeRecord = challengeRecordRepository.findByChallengeDate(date);
+        return challengeRecord.getChallengeType();
     }
 }

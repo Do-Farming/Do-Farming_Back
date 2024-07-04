@@ -15,6 +15,9 @@ public interface GroupRepository extends JpaRepository<Group, Long> {
     @Query("SELECT gm.user FROM group_member gm WHERE gm.group.id = :groupId")
     List<User> findUsersByGroupId(@Param("groupId") Long groupId);
 
+    @Query("SELECT g.id FROM group g")
+    List<Long> findAllGroupIds();
+
     @Query(value = "SELECT * from group where group.started_at <= ?1 and group.ended_at > ?1", nativeQuery = true)
     List<Group> findActiveGroup(LocalDate tomorrow);
 }
