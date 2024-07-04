@@ -1,5 +1,6 @@
 package com.hana.api.challenge.wakeup.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hana.api.challenge.wakeup.dto.WakeupResponseDto;
 import com.hana.api.challenge.wakeup.repository.WakeupChallengeRepository;
 import com.hana.api.group.entity.Group;
@@ -28,6 +29,7 @@ public class WakeupChallengeService {
     private final GroupMemberRepository groupMemberRepository;
     private final WakeupChallengeRepository wakeupChallengeRepository;
     private final RedisTemplate<String, Object> redisTemplate;
+    private final ObjectMapper objectMapper;
 
 
     public static String getTodayObject() {
@@ -57,16 +59,32 @@ public class WakeupChallengeService {
         redisTemplate.opsForValue().set(key, certificate, 26, TimeUnit.HOURS);
     }
 
-//    public WakeupResponseDto.WakeupCertificateDto getWakeupCertificate(UUID userCode) {
-//        User user = userRepository.findByUserCode(userCode)
-//                .orElseThrow(() -> new BaseException(BaseResponseStatus.USERS_EMPTY_USER_ID));
-//        String userId = user.getPhoneNumber();
-//        Long groupId = groupMemberRepository.findGroupByUserId(userId);
-//
-//        String key = "wakeup:certificate:group:" + groupId + ":userId:" + userId;
-//        return (WakeupResponseDto.WakeupCertificateDto) redisTemplate.opsForValue().get(key);
-//    }
-//
+    public List<WakeupResponseDto.WakeupCertificateDto> getWakeupTimesByGroupId(long groupId) {
+        List<WakeupResponseDto.WakeupCertificateDto> wakeupTimes = new ArrayList<>();
+        List<User> users = groupMemberRepository.findUsersByGroupId(groupId);
+
+        if (users.isEmpty()) {
+            throw new BaseException(BaseResponseStatus.GROUPS_USER_NOT_FOUND);
+        }
+
+        for (User user : users) {
+            String key = "wakeup:certificate:group:" + groupId + ":userId:" + user.getPhoneNumber();
+            Object redisValue = redisTemplate.opsForValue().get(key);
+
+            if (redisValue != null) {
+                try {
+                    Map<String, Object> map = (Map<String, Object>) redisValue;
+                    WakeupResponseDto.WakeupCertificateDto certificate =
+                            objectMapper.convertValue(map, WakeupResponseDto.WakeupCertificateDto.class);
+                    wakeupTimes.add(certificate);
+                } catch (IllegalArgumentException e) {
+                    throw new BaseException(BaseResponseStatus.SYSTEM_ERROR);
+                }
+            }
+        }
+        return wakeupTimes;
+    }
+
 //    public void deleteWakeupCertificate(UUID userCode) {
 //        User user = userRepository.findByUserCode(userCode)
 //                .orElseThrow(() -> new BaseException(BaseResponseStatus.USERS_EMPTY_USER_ID));

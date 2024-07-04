@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -35,13 +36,12 @@ public class WakeupController {
         return BaseResponse.success("기상 인증 성공");
     }
 
-//    @Operation(summary = "사용자 기상 시간 조회")
-//    @GetMapping("/getMyWakeupTime")
-//    public BaseResponse.SuccessResult<WakeupResponseDto.WakeupCertificateDto> getWakeupCertificate(@Auth String userCode) {
-//        UUID uuid = UUID.fromString(userCode);
-//        return BaseResponse.success(wakeupChallengeService.getWakeupCertificate(uuid));
-//    }
-//
+    @Operation(summary = "특정 그룹의 기상 시간 리스트 조회")
+    @GetMapping("/{groupId}/wakeuptimes")
+    public BaseResponse.SuccessResult<List<WakeupResponseDto.WakeupCertificateDto>> getWakeupCertificate(@PathVariable long groupId) {
+        return BaseResponse.success(wakeupChallengeService.getWakeupTimesByGroupId(groupId));
+    }
+
 //    @Operation(summary = "사용자 기상 시간 삭제")
 //    @DeleteMapping("/deleteMyWakeupTime")
 //    public BaseResponse.SuccessResult<String> deleteWakeupCertificate(@Auth String userCode) {

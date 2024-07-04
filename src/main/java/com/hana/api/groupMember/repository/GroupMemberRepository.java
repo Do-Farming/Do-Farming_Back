@@ -1,6 +1,7 @@
 package com.hana.api.groupMember.repository;
 
 import com.hana.api.groupMember.entity.GroupMember;
+import com.hana.api.user.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -23,4 +24,7 @@ public interface GroupMemberRepository extends JpaRepository<GroupMember, Long> 
 
     @Query("SELECT DISTINCT gm.group.id FROM group_member gm WHERE gm.user.phoneNumber = :userId")
     Long findGroupByUserId(@Param("userId") String userId);
+
+    @Query("SELECT gm.user FROM group_member gm WHERE gm.group.id = :groupId")
+    List<User> findUsersByGroupId(Long groupId);
 }
