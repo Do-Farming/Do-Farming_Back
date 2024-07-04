@@ -17,4 +17,3 @@ public interface DailyRankRepository extends JpaRepository<DailyRank, Long> {
 
     List<DailyRank> findByGroupIdAndDailyDate(long group_id, LocalDate dailyDate);
 }
-    }
