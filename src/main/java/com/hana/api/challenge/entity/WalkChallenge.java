@@ -1,40 +1,31 @@
-package com.hana.api.dailyRank.entity;
+package com.hana.api.challenge.entity;
 
 import com.hana.api.group.entity.Group;
 import com.hana.api.user.entity.User;
 import com.hana.common.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
-import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
-@Entity(name = "daily_rank")
-@Table(name = "daily_rank")
+@Entity(name = "walk_challenge")
+@Table(name = "walk_challenge")
 @NoArgsConstructor
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 @Builder
 @ToString
 @Getter
-@Setter
-public class DailyRank extends BaseEntity {
+public class WalkChallenge extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "daily_rank_id")
-    long id;
+    @Column(name = "walk_id")
+    private Long id;
 
     @Column(nullable = false)
-    private LocalDate dailyDate;
+    private int step;
 
     @Column(nullable = false)
-    private int dailyRank;
-
-    @Column(nullable = false)
-    private double dailyRate;
-
-    @Column(nullable = false)
-    private double totalRate;
+    private LocalDate walkDate;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "group_id", referencedColumnName = "group_id")

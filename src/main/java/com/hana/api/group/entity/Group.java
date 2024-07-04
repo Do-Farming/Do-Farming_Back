@@ -20,6 +20,7 @@ import java.util.List;
 @Builder
 @ToString
 @Getter
+@Setter
 public class Group extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

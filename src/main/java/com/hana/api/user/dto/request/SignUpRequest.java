@@ -28,7 +28,7 @@ public class SignUpRequest {
                 .password(password)
                 .phoneNumber(phoneNumber)
                 .status(0)
-                .userImg("")
+                .userImg("") //TODO: 추후 수정필요
                 .identificationNumber(identificationNumber).build();
     }
 }

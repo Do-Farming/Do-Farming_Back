@@ -4,7 +4,7 @@ import com.hana.common.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 @Entity(name = "challenge_record")
 @Table(name = "challenge_record")
@@ -20,7 +20,7 @@ public class ChallengeRecord extends BaseEntity {
     long id;
 
     @Column(nullable = false)
-    private LocalDateTime challengeDate;
+    private LocalDate challengeDate;
 
     @Column(nullable = false)
     private int challengeType;

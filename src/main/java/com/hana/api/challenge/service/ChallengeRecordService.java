@@ -9,8 +9,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -23,7 +21,7 @@ public class ChallengeRecordService {
         LocalDate today = LocalDate.now();
         int randomNumber = (int) (Math.random() * 3);
         ChallengeRecord challengeRecord = ChallengeRecord.builder()
-                                            .challengeDate(today.plusDays(1).atStartOfDay())
+                                            .challengeDate(today.plusDays(1))
                                             .challengeType(randomNumber).build();
         challengRecordRepository.save(challengeRecord);
     }

@@ -56,7 +56,7 @@ public class GroupService {
                                         .user(member.getUser())
                         .group(member.getGroup())
                         .dailyRate(0)
-                        .dailyDate(tomorrow.atStartOfDay())
+                        .dailyDate(tomorrow)
                         .totalRate(3.5)
                         .dailyRank(0).build();
                 weeklyRateRepository.save(weeklyRate);
@@ -169,5 +169,9 @@ public class GroupService {
         } else {
             throw new BaseException(BaseResponseStatus.GROUPS_UNAUTHORIZED);
         }
+    }
+
+    public List<User> getUsersByGroupId(Long groupId) {
+        return groupRepository.findUsersByGroupId(groupId);
     }
 }

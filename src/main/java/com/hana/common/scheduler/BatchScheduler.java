@@ -1,5 +1,7 @@
 package com.hana.common.scheduler;
 
+import com.hana.api.dailyRank.service.DailyRankService;
+import com.hana.api.group.repository.GroupRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.*;
@@ -12,13 +14,12 @@ import org.springframework.batch.core.repository.JobInstanceAlreadyCompleteExcep
 import org.springframework.batch.core.repository.JobRestartException;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Conditional;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -27,6 +28,8 @@ public class BatchScheduler {
 
     private final JobLauncher jobLauncher;
     private final JobRegistry jobRegistry;
+    private final DailyRankService dailyRankService;
+    private final GroupRepository groupRepository;
 
     @Bean
     @ConditionalOnMissingBean(name = "jobRegistryBeanPostProcessor")
@@ -84,6 +87,7 @@ public class BatchScheduler {
             throw new RuntimeException(e);
         }
     }
+
     @Scheduled(cron = "0 0 12 * * ?") // 매일 정오에 실행
     public void insertDailyChallenge() {
         try {
@@ -97,8 +101,18 @@ public class BatchScheduler {
         }
     }
 
+    // 일일 랭킹 계산
+    @Scheduled(cron = "0 42 13 * * ?") // 매일 오후 11시 50분에 실행
+    public void calculateDailyRanks() {
+        // 모든 그룹의 ID를 조회
+        List<Long> groupIds = groupRepository.findAllGroupIds();
+        for (Long groupId : groupIds) {
+            dailyRankService.calculateDailyRanks(groupId);
+        }
+    }
+
     //WeeklyRate 매주 일요일 밤 11시 55분에 실행
-    @Scheduled(cron = "0 55 23 ? * SUN") // 매일 정오에 실행
+    @Scheduled(cron = "40 39 13 ? * THU") // 매일 정오에 실행
     public void insertWeeklyRate() {
         try {
             Job job = jobRegistry.getJob("insertWeeklyRateJob");
