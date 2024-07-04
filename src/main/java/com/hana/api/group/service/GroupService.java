@@ -69,6 +69,11 @@ public class GroupService {
         User user = userRepository.findByUserCode(userCode)
                 .orElseThrow(() -> new BaseException(BaseResponseStatus.USERS_EMPTY_USER_ID));
 
+        // 사용자가 도파밍 상품에 가입되어 있는지 확인
+        if (isUserAlreadyInAnyGroup(userCode)) {
+            throw new BaseException(BaseResponseStatus.GROUPS_ALREADY_JOIN);
+        }
+
         Group group = Group.builder()
                 .groupName(request.getGroupName())
                 .groupNumber(request.getGroupNumber())
