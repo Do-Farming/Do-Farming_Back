@@ -102,7 +102,7 @@ public class BatchScheduler {
     }
 
     // 일일 랭킹 계산
-    @Scheduled(cron = "0 50 23 * * ?") // 매일 오후 11시 50분에 실행
+    @Scheduled(cron = "0 42 13 * * ?") // 매일 오후 11시 50분에 실행
     public void calculateDailyRanks() {
         // 모든 그룹의 ID를 조회
         List<Long> groupIds = groupRepository.findAllGroupIds();
@@ -112,7 +112,7 @@ public class BatchScheduler {
     }
 
     //WeeklyRate 매주 일요일 밤 11시 55분에 실행
-    @Scheduled(cron = "0 55 23 ? * SUN") // 매일 정오에 실행
+    @Scheduled(cron = "40 39 13 ? * THU") // 매일 정오에 실행
     public void insertWeeklyRate() {
         try {
             Job job = jobRegistry.getJob("insertWeeklyRateJob");

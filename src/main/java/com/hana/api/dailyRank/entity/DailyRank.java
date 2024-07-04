@@ -7,6 +7,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity(name = "daily_rank")
@@ -24,7 +25,7 @@ public class DailyRank extends BaseEntity {
     long id;
 
     @Column(nullable = false)
-    private LocalDateTime dailyDate;
+    private LocalDate dailyDate;
 
     @Column(nullable = false)
     private int dailyRank;

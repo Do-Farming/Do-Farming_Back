@@ -4,6 +4,7 @@ import com.hana.api.group.entity.Group;
 import com.hana.api.groupMember.entity.GroupMember;
 import lombok.*;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -21,6 +22,8 @@ public class GroupResponseDto {
         private Integer participantNumber;
         private String title;
         private LocalDateTime createdDate;
+        private LocalDate startedAt;
+        private LocalDate endedAt;
 
         public static GetGroupListRes from(Group group, int participantNumber) {
             return GetGroupListRes.builder()
@@ -30,6 +33,8 @@ public class GroupResponseDto {
                     .participantNumber(participantNumber)
                     .title(group.getTitle())
                     .createdDate(group.getCreatedDate())
+                    .startedAt(group.getStartedAt())
+                    .endedAt(group.getEndedAt())
                     .build();
         }
     }
@@ -52,6 +57,8 @@ public class GroupResponseDto {
         private Integer status;
         private boolean isJoined;
         private List<GroupMemberDto> groupMembers;
+        private LocalDate startedAt;
+        private LocalDate endedAt;
 
         public static GetGroupInfoRes from(Group group, int participantNumber, boolean isAdmin, boolean isJoined, List<GroupMember> groupMembers) {
             return GetGroupInfoRes.builder()
@@ -67,6 +74,8 @@ public class GroupResponseDto {
                     .isAdmin(isAdmin)
                     .status(group.getStatus())
                     .isJoined(isJoined)
+                    .startedAt(group.getStartedAt())
+                    .endedAt(group.getEndedAt())
                     .groupMembers(groupMembers.stream().map(GroupMemberDto::from).collect(Collectors.toList()))
                     .build();
         }

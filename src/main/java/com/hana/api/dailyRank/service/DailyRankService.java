@@ -23,7 +23,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
-import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -109,7 +108,7 @@ public class DailyRankService {
                 .orElse(3.5) + dailyRate;
 
         return DailyRank.builder()
-                .dailyDate(now.atStartOfDay())
+                .dailyDate(now)
                 .dailyRank(rank)
                 .dailyRate(dailyRate)
                 .totalRate(totalRate)
