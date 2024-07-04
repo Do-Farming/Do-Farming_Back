@@ -45,7 +45,6 @@ public class AutoTransferJobConfig extends DefaultBatchConfiguration {
             @Value("#{jobParameters[today]}") LocalDate today
     ) {
         log.info("== autoTransferStep ==");
-        //log.info(dealDate.toString());
         return new StepBuilder("autoTransferStep", jobRepository)
                 .tasklet(new com.hana.common.job.AutoTransferTasklet(autoTransferService, accountService, today), transactionManager)
                 .build();

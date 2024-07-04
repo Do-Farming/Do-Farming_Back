@@ -1,5 +1,7 @@
 package com.hana.api.group.service;
 
+import com.hana.api.dailyRank.entity.DailyRank;
+import com.hana.api.dailyRank.repository.DailyRankRepository;
 import com.hana.api.group.dto.GroupRequestDto;
 import com.hana.api.group.dto.GroupResponseDto;
 import com.hana.api.group.entity.Group;
@@ -8,6 +10,8 @@ import com.hana.api.groupMember.entity.GroupMember;
 import com.hana.api.groupMember.entity.GroupMemberPK;
 import com.hana.api.groupMember.repository.GroupMemberRepository;
 import com.hana.api.user.entity.User;
+import com.hana.api.weeklyRate.entity.WeeklyRate;
+import com.hana.api.weeklyRate.repository.WeeklyRateRepository;
 import com.hana.common.config.BaseException;
 import com.hana.common.config.BaseResponseStatus;
 import com.hana.common.scheduler.DynamicSchedulerService;
@@ -17,6 +21,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import com.hana.api.user.repository.UserRepository;
 
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -30,10 +36,34 @@ public class GroupService {
     private final UserRepository userRepository;
     private final GroupRepository groupRepository;
     private final GroupMemberRepository groupMemberRepository;
+    private final WeeklyRateRepository weeklyRateRepository;
+    private final DailyRankRepository dailyRankRepository;
     private final DynamicSchedulerService dynamicSchedulerService;
 
+    @Transactional
+    public void insertWeeklyRateForGroupMembers() {
+        LocalDate tomorrow = LocalDate.now().plusDays(1);
+        List<Group> groups = groupRepository.findActiveGroup(tomorrow);
 
-
+        for (Group group : groups) {
+            LocalDate start = LocalDate.from(group.getStartedAt());
+            int weekly = (((int) ChronoUnit.DAYS.between(start, tomorrow)) / 7) + 1;
+            for (GroupMember member : group.getGroupMembers()) {
+                WeeklyRate weeklyRate = WeeklyRate.builder()
+                                                    .user(member.getUser())
+                                                    .weekly(weekly).rate(3.5).build();
+                DailyRank dailyRank = DailyRank.builder()
+                                        .user(member.getUser())
+                        .group(member.getGroup())
+                        .dailyRate(0)
+                        .dailyDate(tomorrow.atStartOfDay())
+                        .totalRate(3.5)
+                        .dailyRank(0).build();
+                weeklyRateRepository.save(weeklyRate);
+                dailyRankRepository.save(dailyRank);
+            }
+        }
+    }
     public Group createGroup(GroupRequestDto.GroupCreateReq request, UUID userCode) {
 
         User user = userRepository.findByUserCode(userCode)
