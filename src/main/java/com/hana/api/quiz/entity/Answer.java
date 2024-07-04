@@ -1,11 +1,8 @@
 package com.hana.api.quiz.entity;
 
-import com.hana.api.challenge.entity.wakeupChallenge;
 import com.hana.common.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
-
-import java.util.List;
 
 @Entity(name = "answer")
 @Table(name = "answer")
