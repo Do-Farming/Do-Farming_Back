@@ -6,7 +6,7 @@ import com.hana.common.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 @Entity(name = "quiz_challenge")
 @Table(name = "quiz_challenge")
@@ -22,7 +22,7 @@ public class QuizChallenge extends BaseEntity {
     private Long id;
 
     @Column(nullable = false)
-    private LocalDateTime quizDate;
+    private LocalDate quizDate;
 
     @Column(nullable = false)
     private int quizScore;

@@ -1,12 +1,12 @@
-package com.hana.api.challenge.entity;
+package com.hana.api.challenge.wakeup.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.hana.api.group.entity.Group;
 import com.hana.api.user.entity.User;
 import com.hana.common.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity(name = "wakeup_challenge")
@@ -16,14 +16,14 @@ import java.time.LocalDateTime;
 @Builder
 @ToString
 @Getter
-public class wakeupChallenge extends BaseEntity {
+public class WakeupChallenge extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "wakeup_id")
     private Long id;
 
     @Column(nullable = false)
-    private LocalDateTime wakeupDate;
+    private LocalDate wakeupDate;
 
     @Column(nullable = false)
     private LocalDateTime wakeupTime;

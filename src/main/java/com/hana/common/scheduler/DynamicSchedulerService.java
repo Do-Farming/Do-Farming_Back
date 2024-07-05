@@ -9,6 +9,7 @@ import org.springframework.scheduling.TaskScheduler;
 import org.springframework.stereotype.Service;
 
 import java.time.DayOfWeek;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.TemporalAdjusters;
 import java.util.Date;
@@ -33,10 +34,15 @@ public class DynamicSchedulerService {
                 .withMinute(0)
                 .withSecond(0);
 
+        // 차주 월요일로부터 3개월 후의 날짜 계산
+        LocalDateTime threeMonthsLater = nextMonday.plusMonths(3);
+
         // 스케줄링할 작업 정의
         Runnable task = () -> {
             Group group = groupRepository.findById(groupId).orElseThrow(() -> new BaseException(BaseResponseStatus.GROUPS_EMPTY_GROUP_ID));
             group.setStatus(2);
+            group.setStartedAt(LocalDate.from(nextMonday));
+            group.setEndedAt(LocalDate.from(threeMonthsLater));
             groupRepository.save(group);
         };
 

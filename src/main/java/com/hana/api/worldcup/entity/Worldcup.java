@@ -1,12 +1,8 @@
 package com.hana.api.worldcup.entity;
 
-import com.hana.api.challenge.entity.wakeupChallenge;
-import com.hana.api.groupMember.entity.GroupMember;
 import com.hana.common.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
-
-import java.util.List;
 
 @Entity(name = "worldcup")
 @Table(name = "worldcup")

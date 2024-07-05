@@ -1,6 +1,7 @@
 package com.hana.common.job.challenge;
 
 
+import com.hana.api.group.service.GroupService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.StepContribution;
 import org.springframework.batch.core.scope.context.ChunkContext;
@@ -12,8 +13,10 @@ import org.springframework.stereotype.Component;
 @Component
 public class InsertWeeklyRateTasklet implements Tasklet {
 
+    final GroupService groupService;
     @Override
     public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) throws Exception {
-        return null;
+        groupService.insertWeeklyRateForGroupMembers();
+        return RepeatStatus.FINISHED;
     }
 }

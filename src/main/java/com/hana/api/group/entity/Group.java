@@ -1,7 +1,7 @@
 package com.hana.api.group.entity;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.hana.api.challenge.entity.wakeupChallenge;
+import com.hana.api.challenge.wakeup.entity.WakeupChallenge;
 import com.hana.api.groupMember.entity.GroupMember;
 import com.hana.api.user.entity.User;
 import com.hana.common.entity.BaseEntity;
@@ -20,6 +20,7 @@ import java.util.List;
 @Builder
 @ToString
 @Getter
+@Setter
 public class Group extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -51,7 +52,7 @@ public class Group extends BaseEntity {
     private LocalDate startedAt;
     @Column
     private LocalDate endedAt;
-
+  
     @Column(nullable = false)
     @ColumnDefault("0")
     @Setter
@@ -68,7 +69,7 @@ public class Group extends BaseEntity {
 
     @OneToMany(mappedBy = "group", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @ToString.Exclude
-    private List<wakeupChallenge> wakeupChallenges;
+    private List<WakeupChallenge> wakeupChallenges;
 
     @ManyToOne
     @JoinColumn(name = "user_code")

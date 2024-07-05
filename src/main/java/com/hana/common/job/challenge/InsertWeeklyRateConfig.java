@@ -31,7 +31,7 @@ public class InsertWeeklyRateConfig  extends DefaultBatchConfiguration {
 
     @Bean
     public Job insertWeeklyRateJob() {
-        return new JobBuilder("insertWeeklyJob", jobRepository)
+        return new JobBuilder("insertWeeklyRateJob", jobRepository)
                 .start(insertWeeklyRateStep())
                 .build();
     }
@@ -39,7 +39,7 @@ public class InsertWeeklyRateConfig  extends DefaultBatchConfiguration {
     @Bean
     @JobScope
     public Step insertWeeklyRateStep() {
-        return new StepBuilder("insertWeeklyStep", jobRepository)
+        return new StepBuilder("insertWeeklyRateStep", jobRepository)
                 .tasklet(insertWeeklyTasklet, transactionManager)
                 .build();
     }

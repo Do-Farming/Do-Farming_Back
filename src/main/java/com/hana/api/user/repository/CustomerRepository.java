@@ -20,5 +20,5 @@ public interface CustomerRepository extends JpaRepository<User, Long> {
             "FROM user " )
     List<CustomerContactDto> findCustomerContact();
 
-    Optional<Object> findByUserCode(UUID userCode);
+    Optional<User> findByUserCode(UUID userCode);
 }
