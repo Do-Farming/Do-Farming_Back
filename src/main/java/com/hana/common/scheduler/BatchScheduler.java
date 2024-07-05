@@ -89,6 +89,7 @@ public class BatchScheduler {
     }
 
     @Scheduled(cron = "0 0 12 * * ?") // 매일 정오에 실행
+    //@Scheduled(fixedRate = 30000)
     public void insertDailyChallenge() {
         try {
             Job job = jobRegistry.getJob("insertDailyChallengeJob");

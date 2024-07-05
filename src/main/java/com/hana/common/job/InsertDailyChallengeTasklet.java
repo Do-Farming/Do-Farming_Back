@@ -19,7 +19,8 @@ public class InsertDailyChallengeTasklet implements Tasklet {
     private final PushNotificationService pushNotificationService;
     @Override
     public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) throws Exception {
-        pushNotificationService.sendNotificationToDevice("d","d","d");
+        challengeRecordService.insertDailyChallengeRecord();
+        //pushNotificationService.sendNotificationToDevice("d","d","d");
         return RepeatStatus.FINISHED;
     }
 }
