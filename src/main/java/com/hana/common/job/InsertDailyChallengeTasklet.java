@@ -1,6 +1,7 @@
 package com.hana.common.job;
 
 import com.hana.api.challenge.service.ChallengeRecordService;
+import com.hana.api.firebase.service.PushNotificationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.StepContribution;
 import org.springframework.batch.core.repository.JobRepository;
@@ -15,9 +16,10 @@ import org.springframework.transaction.PlatformTransactionManager;
 public class InsertDailyChallengeTasklet implements Tasklet {
 
     private final ChallengeRecordService challengeRecordService;
+    private final PushNotificationService pushNotificationService;
     @Override
     public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) throws Exception {
-        challengeRecordService.insertDailyChallengeRecord();
+        pushNotificationService.sendNotificationToDevice("d","d","d");
         return RepeatStatus.FINISHED;
     }
 }

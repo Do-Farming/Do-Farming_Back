@@ -19,6 +19,7 @@ import java.util.UUID;
 @Builder
 @ToString
 @Getter
+
 public class User extends BaseEntity {
     @Id
     @Column(columnDefinition = "BINARY(16)", name = "user_code")
@@ -63,4 +64,8 @@ public class User extends BaseEntity {
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     @ToString.Exclude
     private List<Account> accounts;
+
+    public void setDeviceId(String id){
+        this.deviceId = UUID.fromString(id);
+    }
 }

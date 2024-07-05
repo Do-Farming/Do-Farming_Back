@@ -63,6 +63,8 @@ dependencies {
     // Test
     testImplementation 'org.projectlombok:lombok'
     testAnnotationProcessor 'org.projectlombok:lombok'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.mockito:mockito-core:4.6.1'
 
     // JSON
     implementation 'com.googlecode.json-simple:json-simple:1.1.1'
@@ -75,6 +77,9 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-webflux'
 
     implementation 'jakarta.annotation:jakarta.annotation-api:2.0.0'
+
+    //gradle
+    implementation 'com.google.firebase:firebase-admin:8.0.1'
 }
 
 tasks.named('test') {
