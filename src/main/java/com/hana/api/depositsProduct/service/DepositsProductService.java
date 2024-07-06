@@ -1,5 +1,6 @@
 package com.hana.api.depositsProduct.service;
 
+import com.hana.api.depositsProduct.dto.CheckingRequest;
 import com.hana.api.depositsProduct.dto.PreferenceInfo;
 import com.hana.api.depositsProduct.dto.response.DepositsProductResponse;
 import com.hana.api.depositsProduct.dto.response.GetListDepositsProductResponse;
@@ -8,17 +9,14 @@ import com.hana.api.depositsProduct.repository.DepositsProductRepository;
 import com.hana.api.depositsProduct.util.DepositsProductUtil;
 import com.hana.common.aop.Preference;
 import com.hana.common.config.*;
-import jakarta.persistence.criteria.CriteriaBuilder.In;
 import java.time.LocalDate;
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.PriorityQueue;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -36,6 +34,7 @@ public class DepositsProductService {
     private final DepositsProductUtil depositsProductUtil;
     private final RedisTemplate<String, Object> redisTemplate;
 
+    // 적금
     @Transactional
     public void saveSavingProduct() {
         List<DepositsProductResponse> savingList = depositsProductUtil.getSavingList();
@@ -45,6 +44,7 @@ public class DepositsProductService {
                 .toList());
     }
 
+    // 예금
     @Transactional
     public void saveDepositProduct() {
         List<DepositsProductResponse> depositList = depositsProductUtil.getDepositList();
@@ -52,6 +52,33 @@ public class DepositsProductService {
                 .stream()
                 .map(DepositsProductResponse::toDepositEntity)
                 .toList());
+    }
+
+    // 입출금
+    @Transactional
+    public DepositsProduct saveCheckingProduct(CheckingRequest.CheckingCreateReq request) {
+        DepositsProduct depositsProduct = DepositsProduct.builder()
+                .type(request.getType())
+                .finPrdtCd(request.getFinPrdtCd())
+                .dclsMonth(request.getDclsMonth())
+                .finCoNo(request.getFinCoNo())
+                .korCoNm(request.getKorCoNm())
+                .finPrdtNm(request.getFinPrdtNm())
+                .joinWay(request.getJoinWay())
+                .mtrtInt(request.getMtrtInt())
+                .spclCnd(request.getSpclCnd())
+                .joinDeny(request.getJoinDeny())
+                .joinMember(request.getJoinMember())
+                .etcNote(request.getEtcNote())
+                .maxLimit(request.getMaxLimit())
+                .dclsStrtDay(request.getDclsStrtDay())
+                .dclsEndDay(request.getDclsEndDay())
+                .finCoSubmDay(request.getFinCoSubmDay())
+                .build();
+
+        depositsProductRepository.save(depositsProduct);
+
+        return depositsProduct;
     }
 
     @Preference
