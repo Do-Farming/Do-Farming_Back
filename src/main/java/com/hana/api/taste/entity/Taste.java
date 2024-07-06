@@ -11,7 +11,7 @@ import lombok.*;
 @Builder
 @ToString
 @Getter
-public class Taste extends BaseEntity {
+public class Taste {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "taste_id")
@@ -22,6 +22,9 @@ public class Taste extends BaseEntity {
 
     @Column(nullable = false)
     private String tasteCategory;
+
+    @Column(nullable = false)
+    private String tasteTag;
 
     @Column(nullable = false)
     private String tasteImg;

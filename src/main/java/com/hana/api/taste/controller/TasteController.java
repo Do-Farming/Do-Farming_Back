@@ -1,8 +1,5 @@
 package com.hana.api.taste.controller;
 
-import com.hana.api.card.dto.CardResponseDto;
-import com.hana.api.card.entity.Card;
-import com.hana.api.card.service.CardService;
 import com.hana.api.taste.dto.TasteResponseDto;
 import com.hana.api.taste.entity.Taste;
 import com.hana.api.taste.service.TasteService;
@@ -11,7 +8,6 @@ import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
