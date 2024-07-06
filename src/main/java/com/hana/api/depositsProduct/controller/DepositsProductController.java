@@ -1,13 +1,14 @@
 package com.hana.api.depositsProduct.controller;
 
 
+import com.hana.api.depositsProduct.dto.CheckingRequest;
 import com.hana.api.depositsProduct.dto.PreferenceInfo;
 import com.hana.api.depositsProduct.dto.response.GetDetailDepositsProductResponse;
 import com.hana.api.depositsProduct.dto.response.GetListDepositsProductResponse;
+import com.hana.api.depositsProduct.entity.DepositsProduct;
 import com.hana.api.depositsProduct.service.DepositsProductService;
 import com.hana.common.config.*;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -67,6 +68,13 @@ public class DepositsProductController {
         depositsProductService.saveSavingProduct();
         depositsProductService.saveDepositProduct();
         return BaseResponse.success(true);
+    }
+
+    @PostMapping("/checking")
+    @Operation(summary = "입출금 상품 저장")
+    public BaseResponse.SuccessResult<String> saveCheckingProduct(CheckingRequest.CheckingCreateReq request) {
+        depositsProductService.saveCheckingProduct(request);
+        return BaseResponse.success("입출금 상품 저장 성공");
     }
 
     @GetMapping("/preference")
