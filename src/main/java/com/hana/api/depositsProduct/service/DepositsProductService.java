@@ -81,6 +81,11 @@ public class DepositsProductService {
         return depositsProduct;
     }
 
+    public List<DepositsProduct> getCheckingProduct() {
+        List<DepositsProduct> checkingProductList = depositsProductRepository.findCheckingProduct();
+        return checkingProductList;
+    }
+
     @Preference
     public DepositsProduct getDetail(Long id) {
         Optional<DepositsProduct> depositsProductResponse = depositsProductRepository.findById(id);
