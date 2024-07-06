@@ -18,8 +18,8 @@ public class TasteService {
 
     private final TasteRepository tasteRepository;
 
-    public List<Taste> getCardList() {
-        List<Taste> tasteList = tasteRepository.findAll();
+    public List<Taste> getTasteList(String category) {
+        List<Taste> tasteList = tasteRepository.findTasteByTasteCategory(category);
         return tasteList;
     }
 
