@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -19,8 +20,10 @@ public class TasteService {
     private final TasteRepository tasteRepository;
 
     public List<Taste> getTasteList(String category) {
-        List<Taste> tasteList = tasteRepository.findTasteByTasteCategory(category);
-        return tasteList;
+        List<Taste> allTasteList = tasteRepository.findTasteByTasteCategory(category);
+        Collections.shuffle(allTasteList);
+        // 8(8강) 크기의 서브 리스트를 반환
+        return allTasteList.subList(0, 8);
     }
 
 }
