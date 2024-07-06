@@ -1,5 +1,6 @@
 package com.hana.api.taste.controller;
 
+import com.hana.api.card.entity.Card;
 import com.hana.api.taste.dto.TasteResponseDto;
 import com.hana.api.taste.entity.Taste;
 import com.hana.api.taste.service.TasteService;
@@ -24,10 +25,16 @@ public class TasteController {
 
     @GetMapping("")
     @Operation(summary = "Taste List Data 조회")
-    public BaseResponse.SuccessResult<TasteResponseDto.GetTasteList> getCardList(@RequestParam String category) {
+    public BaseResponse.SuccessResult<TasteResponseDto.GetTasteList> getTasteList(@RequestParam String category) {
         List<Taste> tasteList = tasteService.getTasteList(category);
-
         return BaseResponse.success(new TasteResponseDto.GetTasteList(tasteList));
+    }
+
+    @GetMapping("/recommended")
+    @Operation(summary = "취향 이상형 월드컵 1위와 관련된 추천 신용카드 조회")
+    public BaseResponse.SuccessResult<TasteResponseDto.GetTopRankingCard> getTopRankingCard(@RequestParam String tag) {
+        Card topRankingCard = tasteService.getTopRankingCard(tag);
+        return BaseResponse.success(new TasteResponseDto.GetTopRankingCard(topRankingCard));
     }
 
 }
