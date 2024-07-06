@@ -77,6 +77,12 @@ public class DepositsProductController {
         return BaseResponse.success("입출금 상품 저장 성공");
     }
 
+    @GetMapping("/checking")
+    @Operation(summary = "입출금 상품 조회")
+    public BaseResponse.SuccessResult<List<DepositsProduct>> getCheckingProduct() {
+        return BaseResponse.success(depositsProductService.getCheckingProduct());
+    }
+
     @GetMapping("/preference")
     @Operation(summary = "상품 조회 순위 조회")
     public BaseResponse.SuccessResult<Map<Integer, PreferenceInfo>> getPreferences() {
