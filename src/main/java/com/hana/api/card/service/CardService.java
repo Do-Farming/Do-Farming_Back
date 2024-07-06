@@ -57,7 +57,7 @@ public class CardService {
                 Card card = Card.builder()
                         .id(jsonNode.path("idx").asLong())
                         .cardName(jsonNode.path("name").asText())
-                        .ranking(jsonNode.path("ranking").asText())
+                        .ranking(jsonNode.path("ranking").asInt())
                         .type(type)
                         .benefit(jsonNode.path("top_benefit").toString())
                         .img("https://d1c5n4ri2guedi.cloudfront.net" + jsonNode.path("card_img").asText())

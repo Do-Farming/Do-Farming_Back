@@ -1,6 +1,5 @@
-package com.hana.api.worldcup.entity;
+package com.hana.api.taste.entity;
 
-import com.hana.api.user.entity.User;
 import com.hana.common.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
@@ -18,11 +17,8 @@ public class FirstRank extends BaseEntity {
     @Column(name = "first_rank_id")
     private long id;
 
-    @Column(nullable = false)
-    private String worldCategory;
-
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "worldcup_id", referencedColumnName = "worldcup_id")
-    private Worldcup worldcup;
+    @JoinColumn(name = "taste_id", referencedColumnName = "taste_id")
+    private Taste taste;
 
 }

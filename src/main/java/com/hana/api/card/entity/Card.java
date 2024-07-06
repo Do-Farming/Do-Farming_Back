@@ -18,7 +18,7 @@ public class Card extends BaseEntity {
 
     private String cardName; // name
 
-    private String ranking; // ranking
+    private int ranking; // ranking
 
     private String type; // card_gb (CRD, CHK)
 
