@@ -80,6 +80,12 @@ dependencies {
 
     //gradle
     implementation 'com.google.firebase:firebase-admin:8.0.1'
+
+    // Firebase Admin SDK
+    implementation 'com.google.firebase:firebase-admin:9.1.1'
+
+    //WebSocket
+    implementation 'org.springframework.boot:spring-boot-starter-websocket'
 }
 
 tasks.named('test') {
