@@ -3,6 +3,7 @@ package com.hana.api.signSaving.controller;
 import com.hana.api.auth.Auth;
 import com.hana.api.auth.dto.JwtToken;
 import com.hana.api.auth.jwt.JwtTokenProvider;
+import com.hana.api.signSaving.dto.request.DofarmingJoinRequestDto;
 import com.hana.api.signSaving.dto.request.SavingJoinRequestDto;
 import com.hana.api.signSaving.dto.response.AccountInfoResponse;
 import com.hana.api.signSaving.dto.response.SavingJoinResponseDto;
@@ -37,6 +38,19 @@ public class SignSavingController {
 
         UUID uuid = UUID.fromString(userCode);
         return BaseResponse.success(signSavingService.joinSavingAccount(uuid, request));
+    }
+
+    @Operation(summary = "두파밍 상품 가입")
+    @ApiResponses({
+            @ApiResponse(responseCode = "1000", description = "두파밍 상품 가입 성공", content = @Content(schema = @Schema(implementation = BaseResponse.SuccessResult.class)))
+    })
+    @PostMapping("/dofarming/create")
+    public BaseResponse.SuccessResult<String> createDofarmingAccount(@Auth String userCode,
+                                                                                 @RequestBody DofarmingJoinRequestDto request) {
+
+        UUID uuid = UUID.fromString(userCode);
+        signSavingService.joinDofarmingAccount(uuid, request);
+        return BaseResponse.success("두파밍 상품 가입 성공");
     }
 
     @Operation(summary = "예금 계좌 정보 조회")
