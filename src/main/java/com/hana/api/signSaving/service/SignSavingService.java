@@ -83,7 +83,7 @@ public class SignSavingService {
         accountService.makeTransaction(MakeTransactionDto.builder()
                 .accountId(withdrawAccount.getId())
                 .password(withdrawAccount.getPassword())
-                .amount(500000L)
+                .amount(1000000L)
                 .recipientAccountNumber(savingAccount.getAccountNumber())
                 .recipientBank("하나")
                 .senderRemarks(savingAccount.getName())
