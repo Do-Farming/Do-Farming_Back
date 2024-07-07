@@ -50,7 +50,6 @@ public class CardService {
             JsonNode cardListResponse = objectMapper.readTree(response);
 //            log.info("cardListResponse: {}", cardListResponse.toString());
 
-
             if(!cardListResponse.isArray()) return null;
             for(JsonNode jsonNode : cardListResponse) {
                 // Response to Entity
@@ -59,9 +58,9 @@ public class CardService {
                         .cardName(jsonNode.path("name").asText())
                         .ranking(jsonNode.path("ranking").asInt())
                         .type(type)
-                        .benefit(jsonNode.path("top_benefit").toString())
+                        .benefit(jsonNode.path("top_benefit").asText())
                         .img("https://d1c5n4ri2guedi.cloudfront.net" + jsonNode.path("card_img").asText())
-                        .corp(jsonNode.path("corp").toString())
+                        .corp(jsonNode.path("corp").asText())
                         .annualFee(jsonNode.path("annual_fee_basic").asText())
                         .build();
 
