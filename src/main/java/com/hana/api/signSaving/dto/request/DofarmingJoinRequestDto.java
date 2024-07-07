@@ -10,6 +10,6 @@ import lombok.NoArgsConstructor;
 public class DofarmingJoinRequestDto {
     private Long dofarmingProductId;
     private Long withdrawAccountId;
-    private Long depositAmount = 500000L;
+    private Long depositAmount = 1000000L;
     private String accountPassword;
 }
