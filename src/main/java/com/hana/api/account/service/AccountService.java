@@ -5,12 +5,10 @@ import java.util.List;
 import java.util.Random;
 import java.util.UUID;
 
-import com.hana.api.account.dto.AccountCheckResponse;
-import com.hana.api.account.dto.AccountCreateDto;
-import com.hana.api.account.dto.AccountValidationRequest;
-import com.hana.api.account.dto.MakeTransactionDto;
+import com.hana.api.account.dto.*;
 import com.hana.api.account.entity.Account;
 import com.hana.api.account.repository.AccountRepository;
+import com.hana.api.depositsProduct.repository.DepositsProductRepository;
 import com.hana.api.history.dto.TransferHistoryDto;
 import com.hana.api.history.service.HistoryService;
 import com.hana.api.user.entity.User;
@@ -29,6 +27,7 @@ public class AccountService {
     private final AccountRepository accountRepository;
     private final UserRepository customerRepository;
     private final HistoryService historyService;
+    private final DepositsProductRepository depositsProductRepository;
 
     private final int LOW_BOUND = 10_000_000;
     private final int MAX_BOUND = 90_000_000;
