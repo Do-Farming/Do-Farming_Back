@@ -4,6 +4,7 @@ package com.hana.api.account.service;
 import java.util.List;
 import java.util.Random;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import com.hana.api.account.dto.*;
 import com.hana.api.account.entity.Account;
@@ -47,10 +48,24 @@ public class AccountService {
         return accountRepository.save(account);
     }
 
+
     public List<AccountCheckResponse> myAccounts(UUID userCode) {
         List<Account> accounts = accountRepository.findAccountByCustomerId(userCode);
         return accounts.stream().map(AccountCheckResponse::new).toList();
     }
+
+    public List<AccountCheckResponse> myCheckingAccounts(UUID userCode) {
+        List<Account> accounts = accountRepository.findAccountByCustomerId(userCode);
+        List<AccountCheckResponse> accountRes = accounts.stream().map(AccountCheckResponse::new).toList();
+
+        // prodType이 "03"인 계좌들만 필터링
+        List<AccountCheckResponse> checkingAccounts = accountRes.stream()
+                .filter(account -> "03".equals(account.getProductType()))
+                .collect(Collectors.toList());
+
+        return checkingAccounts.stream().toList();
+    }
+
 
     public Boolean validateAccount(AccountValidationRequest validationRequest) {
         Account account = accountRepository.findById(validationRequest.getAccountId())

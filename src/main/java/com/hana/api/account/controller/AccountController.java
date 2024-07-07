@@ -61,6 +61,17 @@ public class AccountController {
         return BaseResponse.success(accountService.myAccounts(uuid));
     }
 
+    @Operation(summary = "입출금 계좌 조회")
+    @ApiResponses({
+            @ApiResponse(responseCode = "1000", description = "입출금 계좌조회 성공", content = @Content(schema = @Schema(implementation = BaseResponse.SuccessResult.class))),
+    })
+    @GetMapping("/my/checking")
+    public BaseResponse.SuccessResult<List<AccountCheckResponse>> myCheckingAccounts(@Parameter(hidden = true) @Auth String userCode) {
+
+        UUID uuid = UUID.fromString(userCode);
+        return BaseResponse.success(accountService.myCheckingAccounts(uuid));
+    }
+
     @Operation(summary = "단일 계좌 조회")
     @ApiResponses({
             @ApiResponse(responseCode = "1000", description = "단일 계좌조회 성공", content = @Content(schema = @Schema(implementation = BaseResponse.SuccessResult.class))),
