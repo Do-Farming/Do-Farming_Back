@@ -4,10 +4,13 @@ import com.hana.api.challenge.entity.ChallengeRecord;
 import com.hana.api.challenge.repository.ChallengeRecordRepository;
 import com.hana.api.challenge.wakeup.entity.WakeupChallenge;
 import com.hana.api.challenge.wakeup.repository.WakeupChallengeRepository;
+import com.hana.api.dailyRank.dto.DailyRankHistoryResponseDto;
 import com.hana.api.dailyRank.dto.RankDto;
 import com.hana.api.dailyRank.dto.Response.DailyRankResponse;
 import com.hana.api.dailyRank.entity.DailyRank;
+import com.hana.api.dailyRank.entity.DailyRankHistory;
 import com.hana.api.dailyRank.repository.DailyRankRepository;
+import com.hana.api.dailyRank.repository.DailyRankHistoryRepository;
 import com.hana.api.challenge.entity.WalkChallenge;
 import com.hana.api.challenge.entity.QuizChallenge;
 import com.hana.api.challenge.repository.WalkChallengeRepository;
@@ -21,16 +24,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class DailyRankService {
     private final DailyRankRepository dailyRankRepository;
+    private final DailyRankHistoryRepository dailyRankHistoryRepository;
     private final WalkChallengeRepository walkChallengeRepository;
     private final WakeupChallengeRepository wakeupChallengeRepository;
     private final QuizChallengeRepository quizChallengeRepository;
@@ -93,10 +94,11 @@ public class DailyRankService {
                     .orElse(null);
 
             if (existingRank != null) {
-                updateDailyRank(existingRank, rank, users.size());
+                updateDailyRank(existingRank, rank, users.size(), now);
             } else {
                 DailyRank newRank = createDailyRank(groupId, now, record, users.size(), rank);
                 dailyRankRepository.save(newRank);
+                saveDailyRankHistory(newRank); // 히스토리 저장
             }
         }
     }
@@ -115,10 +117,11 @@ public class DailyRankService {
                     .orElse(null);
 
             if (existingRank != null) {
-                updateDailyRank(existingRank, rank, users.size());
+                updateDailyRank(existingRank, rank, users.size(), now);
             } else {
                 DailyRank newRank = createDailyRank(groupId, now, record, users.size(), rank);
                 dailyRankRepository.save(newRank);
+                saveDailyRankHistory(newRank); // 히스토리 저장
             }
         }
     }
@@ -137,23 +140,26 @@ public class DailyRankService {
                     .orElse(null);
 
             if (existingRank != null) {
-                updateDailyRank(existingRank, rank, users.size());
+                updateDailyRank(existingRank, rank, users.size(), now);
             } else {
                 DailyRank newRank = createDailyRank(groupId, now, record, users.size(), rank);
                 dailyRankRepository.save(newRank);
+                saveDailyRankHistory(newRank); // 히스토리 저장
             }
         }
     }
 
-    private void updateDailyRank(DailyRank existingRank, int rank, int userCount) {
+    private void updateDailyRank(DailyRank existingRank, int rank, int userCount, LocalDate now) {
         double dailyRate = calculateDailyRate(rank, userCount);
         double totalRate = existingRank.getTotalRate() - existingRank.getDailyRate() + dailyRate;
 
+        existingRank.setDailyDate(now);
         existingRank.setDailyRank(rank);
         existingRank.setDailyRate(dailyRate);
         existingRank.setTotalRate(totalRate);
 
         dailyRankRepository.save(existingRank);
+        saveDailyRankHistory(existingRank); // 히스토리 저장
     }
 
     private DailyRank createDailyRank(Long groupId, LocalDate now, Object record, int userCount, int rank) {
@@ -226,15 +232,30 @@ public class DailyRankService {
         return rate;
     }
 
+    private void saveDailyRankHistory(DailyRank rank) {
+        DailyRankHistory history = DailyRankHistory.builder()
+                .date(rank.getDailyDate())
+                .dailyRank(rank.getDailyRank())
+                .dailyRate(rank.getDailyRate())
+                .totalRate(rank.getTotalRate())
+                .group(rank.getGroup())
+                .userCode(rank.getUser())
+                .build();
+
+        dailyRankHistoryRepository.save(history);
+    }
+
     @Transactional(readOnly = true)
     public DailyRankResponse getDailyRanks(Long groupId) {
         LocalDate today = LocalDate.now();
         List<DailyRank> dailyRanks = dailyRankRepository.findByGroupIdAndDailyDate(groupId, today);
 
         List<RankDto> ranking = dailyRanks.stream()
+                .sorted(Comparator.comparingDouble(DailyRank::getTotalRate).reversed())
                 .map(dr -> RankDto.builder()
                         .name(dr.getUser().getName())
-                        .dailyRate(String.format("%.3f", dr.getDailyRate()))
+//                        .dailyRate(String.format("%.3f", dr.getDailyRate()))
+                        .dailyRate(String.format("%.3f", dr.getTotalRate()))
                         .challengeType(getChallengeType(today))
                         .challengeDate(today.toString())
                         .build())
@@ -249,5 +270,19 @@ public class DailyRankService {
     private int getChallengeType(LocalDate date) {
         ChallengeRecord challengeRecord = challengeRecordRepository.findByChallengeDate(date);
         return challengeRecord.getChallengeType();
+    }
+
+    private DailyRankHistoryResponseDto convertToDto(DailyRankHistory history) {
+        return DailyRankHistoryResponseDto.builder()
+                .date(history.getDate())
+                .totalRate(history.getTotalRate())
+                .build();
+    }
+
+    public List<DailyRankHistoryResponseDto> getDailyRankHistory(Long groupId, UUID userCode) {
+        List<DailyRankHistoryResponseDto> list =  dailyRankHistoryRepository.findDailyRankHistoryByGroupIdAndUserCode(groupId, userCode).stream()
+                .map(this::convertToDto)
+                .collect(Collectors.toList());
+        return list;
     }
 }
