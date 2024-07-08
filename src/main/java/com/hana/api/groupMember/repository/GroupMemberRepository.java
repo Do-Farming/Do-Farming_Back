@@ -29,4 +29,7 @@ public interface GroupMemberRepository extends JpaRepository<GroupMember, Long> 
     List<User> findUsersByGroupId(Long groupId);
 
     List<GroupMember> findGroupMemberByGroupId(Long groupId);
+
+    @Query("SELECT gm.group.id FROM group_member gm WHERE gm.user.userCode = :userCode")
+    Long findGroupIdByUserCode(UUID userCode);
 }

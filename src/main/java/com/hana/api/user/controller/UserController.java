@@ -7,6 +7,7 @@ import com.hana.api.user.dto.response.MyInfoResponse;
 import com.hana.api.user.service.UserService;
 import com.hana.common.config.*;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -42,8 +43,8 @@ public class UserController {
 
     @Operation(summary = "내 정보 조회")
     @GetMapping("/me")
-    public BaseResponse.SuccessResult<MyInfoResponse> me(@Auth UUID userCode) {
-        return BaseResponse.success(customerService.findByUserCode(userCode));
+    public BaseResponse.SuccessResult<MyInfoResponse> me(@Parameter(hidden = true) @Auth String userCode) {
+        return BaseResponse.success(customerService.findByUserCode(UUID.fromString(userCode)));
     }
 
     @Operation(summary = "[😈Admin] 고객 이름 및 연락처 정보 조회")
