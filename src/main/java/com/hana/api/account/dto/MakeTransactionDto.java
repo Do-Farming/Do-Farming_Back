@@ -9,7 +9,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
-@NoArgsConstructor
 @Builder
 public class MakeTransactionDto {
     private Long accountId;
