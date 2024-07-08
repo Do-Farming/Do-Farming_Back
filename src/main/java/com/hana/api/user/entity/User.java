@@ -19,7 +19,7 @@ import java.util.UUID;
 @Builder
 @ToString
 @Getter
-
+@Setter
 public class User extends BaseEntity {
     @Id
     @Column(columnDefinition = "BINARY(16)", name = "user_code")
@@ -40,8 +40,8 @@ public class User extends BaseEntity {
     @Column(nullable = false)
     private int status;
 
-    @Column(columnDefinition = "BINARY(16)", name = "device_id")
-    private UUID deviceId;
+    @Column(unique = true, nullable = true)
+    private String deviceId;
 
     private String userImg;
 
@@ -64,8 +64,4 @@ public class User extends BaseEntity {
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     @ToString.Exclude
     private List<Account> accounts;
-
-    public void setDeviceId(String id){
-        this.deviceId = UUID.fromString(id);
-    }
 }
