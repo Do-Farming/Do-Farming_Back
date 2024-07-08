@@ -14,7 +14,7 @@ public class PushNotificationService {
 
     private void sendPushNotification(String token, String title, String message) {
         RestTemplate restTemplate = new RestTemplate();
-        String payload = String.format("{\"to\":\"%s\",\"sound\":\"default\",\"title\":\"%s\",\"body\":\"%s\"}", "ExponentPushToken[-FSFxvP0NsUarmmpNqcOlm]", "Dofarming", "message");
+        String payload = String.format("{\"to\":\"%s\",\"sound\":\"default\",\"title\":\"%s\",\"body\":\"%s\"}", token, title, message);
         restTemplate.postForEntity(EXPO_PUSH_URL, payload, String.class);
     }
 }
