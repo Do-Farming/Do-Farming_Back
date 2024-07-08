@@ -46,7 +46,7 @@ public class UserService {
 
 
     public MyInfoResponse findByUserCode(UUID userCode) {
-        return new MyInfoResponse((User) customerRepository.findByUserCode(userCode).orElseThrow(() ->
+        return new MyInfoResponse(customerRepository.findByUserCode(userCode).orElseThrow(() ->
                 new BaseException(BaseResponseStatus.INVALID_USER_JWT)));
     }
 
