@@ -5,6 +5,7 @@ import com.hana.api.auth.Auth;
 import com.hana.api.group.dto.GroupRequestDto;
 import com.hana.api.group.dto.GroupResponseDto;
 import com.hana.api.group.service.GroupService;
+import com.hana.api.groupMember.service.GroupMemberService;
 import com.hana.common.config.BaseException;
 import com.hana.common.config.BaseResponse;
 import com.hana.common.config.BaseResponseStatus;
@@ -24,6 +25,7 @@ import java.util.UUID;
 public class GroupController {
 
     private final GroupService groupService;
+    private final GroupMemberService groupMemberService;
 
     @Operation(summary = "챌린지 그룹 생성")
     @PostMapping("/create")
@@ -82,5 +84,14 @@ public class GroupController {
         UUID uuid = UUID.fromString(userCode);
         groupService.groupDelete(request.getGroupId(), uuid);
         return BaseResponse.success("챌린지 그룹 삭제 성공");
+    }
+
+    @Operation(summary = "내가 속한 그룹 조회")
+    @GetMapping("/my")
+    public BaseResponse.SuccessResult<GroupResponseDto.GetGroupInfoRes> getMyGroup(@Parameter(hidden = true) @Auth String userCode) {
+        UUID uuid = UUID.fromString(userCode);
+        Long groupId = groupMemberService.getGroupIdByUserCode(uuid);
+        GroupResponseDto.GetGroupInfoRes group = groupService.groupDetail(groupId, uuid);
+        return BaseResponse.success(group);
     }
 }
