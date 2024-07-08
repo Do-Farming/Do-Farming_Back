@@ -12,6 +12,7 @@ import java.util.List;
 public interface DepositsProductRepository extends JpaRepository<DepositsProduct, Long> {
     @Query("select s from deposits_product s where s.finPrdtNm like %:searchword%")
     List<DepositsProduct> findByserchwordLike(@Param("searchword") String searchword);
+    List<DepositsProduct> findByType(String type);
 
     @Query("select s from deposits_product s where s.type='CHECKING'")
     List<DepositsProduct> findCheckingProduct();

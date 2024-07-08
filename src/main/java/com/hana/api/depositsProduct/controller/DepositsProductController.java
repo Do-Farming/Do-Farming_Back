@@ -3,9 +3,11 @@ package com.hana.api.depositsProduct.controller;
 
 import com.hana.api.depositsProduct.dto.CheckingRequest;
 import com.hana.api.depositsProduct.dto.PreferenceInfo;
+import com.hana.api.depositsProduct.dto.response.DepositProductsResponse;
 import com.hana.api.depositsProduct.dto.response.GetDetailDepositsProductResponse;
 import com.hana.api.depositsProduct.dto.response.GetListDepositsProductResponse;
 import com.hana.api.depositsProduct.entity.DepositsProduct;
+import com.hana.api.depositsProduct.entity.DepositsType;
 import com.hana.api.depositsProduct.service.DepositsProductService;
 import com.hana.common.config.*;
 import io.swagger.v3.oas.annotations.Operation;
@@ -14,6 +16,9 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -33,9 +38,8 @@ public class DepositsProductController {
             @ApiResponse(responseCode = "1000", description = "조회 완료", content = @Content(schema = @Schema(implementation = BaseResponse.SuccessResult.class))),
     })
     @GetMapping("/list")
-    public BaseResponse.SuccessResult<List<GetListDepositsProductResponse>> getDepositsProducts() {
-        List<GetListDepositsProductResponse> response = depositsProductService.getList();
-        return BaseResponse.success(response);
+    public BaseResponse.SuccessResult<Map<DepositsType, List<DepositProductsResponse>>> getDepositsProducts() {
+        return BaseResponse.success(depositsProductService.getList());
     }
 
     @Operation(summary = "예적금 상품 검색")
