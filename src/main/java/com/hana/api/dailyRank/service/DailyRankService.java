@@ -22,9 +22,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.UUID;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 @Service
 @RequiredArgsConstructor
@@ -52,14 +53,33 @@ public class DailyRankService {
     private void calculateWalkingRanks(Long groupId, LocalDate now, List<User> users) {
         List<WalkChallenge> records = walkChallengeRepository.findByWalkDateAndGroupId(now, groupId);
 
-        // 걸음수가 많은 순서로 정렬
-        records.sort((r1, r2) -> Integer.compare(r2.getStep(), r1.getStep()));
+        // userCode별로 가장 최신의 step 데이터를 가져오기
+        Map<UUID, WalkChallenge> latestWalkChallenges = records.stream()
+                .collect(Collectors.toMap(
+                        wc -> wc.getUser().getUserCode(),
+                        wc -> wc,
+                        (wc1, wc2) -> wc1.getWalkDate().isAfter(wc2.getWalkDate()) ? wc1 : wc2
+                ));
 
-        List<DailyRank> dailyRanks = IntStream.range(0, records.size())
-                .mapToObj(index -> createDailyRank(groupId, now, records.get(index), users.size(), index + 1))
+        // 걸음수가 많은 순서로 정렬
+        List<WalkChallenge> sortedRecords = latestWalkChallenges.values().stream()
+                .sorted((r1, r2) -> Integer.compare(r2.getStep(), r1.getStep()))
                 .collect(Collectors.toList());
 
-        dailyRankRepository.saveAll(dailyRanks);
+        for (int index = 0; index < sortedRecords.size(); index++) {
+            WalkChallenge record = sortedRecords.get(index);
+            int rank = index + 1;
+
+            DailyRank existingRank = dailyRankRepository.findByGroupIdAndDailyDateAndUser(groupId, now, record.getUser())
+                    .orElse(null);
+
+            if (existingRank != null) {
+                updateDailyRank(existingRank, rank, users.size());
+            } else {
+                DailyRank newRank = createDailyRank(groupId, now, record, users.size(), rank);
+                dailyRankRepository.save(newRank);
+            }
+        }
     }
 
     private void calculateWakeupRanks(Long groupId, LocalDate now, List<User> users) {
@@ -68,11 +88,20 @@ public class DailyRankService {
         // 일어난 시간이 빠른 순서로 정렬
         records.sort((r1, r2) -> r1.getWakeupTime().compareTo(r2.getWakeupTime()));
 
-        List<DailyRank> dailyRanks = IntStream.range(0, records.size())
-                .mapToObj(index -> createDailyRank(groupId, now, records.get(index), users.size(), index + 1))
-                .collect(Collectors.toList());
+        for (int index = 0; index < records.size(); index++) {
+            WakeupChallenge record = records.get(index);
+            int rank = index + 1;
 
-        dailyRankRepository.saveAll(dailyRanks);
+            DailyRank existingRank = dailyRankRepository.findByGroupIdAndDailyDateAndUser(groupId, now, record.getUser())
+                    .orElse(null);
+
+            if (existingRank != null) {
+                updateDailyRank(existingRank, rank, users.size());
+            } else {
+                DailyRank newRank = createDailyRank(groupId, now, record, users.size(), rank);
+                dailyRankRepository.save(newRank);
+            }
+        }
     }
 
     private void calculateQuizRanks(Long groupId, LocalDate now, List<User> users) {
@@ -81,11 +110,31 @@ public class DailyRankService {
         // 맞춘 퀴즈가 많은 순서로 정렬
         records.sort((r1, r2) -> Integer.compare(r2.getQuizScore(), r1.getQuizScore()));
 
-        List<DailyRank> dailyRanks = IntStream.range(0, records.size())
-                .mapToObj(index -> createDailyRank(groupId, now, records.get(index), users.size(), index + 1))
-                .collect(Collectors.toList());
+        for (int index = 0; index < records.size(); index++) {
+            QuizChallenge record = records.get(index);
+            int rank = index + 1;
 
-        dailyRankRepository.saveAll(dailyRanks);
+            DailyRank existingRank = dailyRankRepository.findByGroupIdAndDailyDateAndUser(groupId, now, record.getUser())
+                    .orElse(null);
+
+            if (existingRank != null) {
+                updateDailyRank(existingRank, rank, users.size());
+            } else {
+                DailyRank newRank = createDailyRank(groupId, now, record, users.size(), rank);
+                dailyRankRepository.save(newRank);
+            }
+        }
+    }
+
+    private void updateDailyRank(DailyRank existingRank, int rank, int userCount) {
+        double dailyRate = calculateDailyRate(rank, userCount);
+        double totalRate = existingRank.getTotalRate() - existingRank.getDailyRate() + dailyRate;
+
+        existingRank.setDailyRank(rank);
+        existingRank.setDailyRate(dailyRate);
+        existingRank.setTotalRate(totalRate);
+
+        dailyRankRepository.save(existingRank);
     }
 
     private DailyRank createDailyRank(Long groupId, LocalDate now, Object record, int userCount, int rank) {
@@ -103,7 +152,9 @@ public class DailyRankService {
             dailyRate = calculateDailyRate(rank, userCount);
         }
 
-        double totalRate = dailyRankRepository.findLatestByUser(Objects.requireNonNull(user).getUserCode())
+        double totalRate = dailyRankRepository.findTop1ByUserOrderByDailyDateDesc(Objects.requireNonNull(user).getUserCode())
+                .stream()
+                .findFirst()
                 .map(DailyRank::getTotalRate)
                 .orElse(3.5) + dailyRate;
 
@@ -123,32 +174,32 @@ public class DailyRankService {
         switch (userCount) {
             case 5:
                 switch (rank) {
-                    case 1: rate = 0.357; break;
-                    case 2: rate = 0.178; break;
+                    case 1: rate = 0.051; break;
+                    case 2: rate = 0.026; break;
                     case 3: rate = 0.0; break;
-                    case 4: rate = -0.178; break;
-                    case 5: rate = -0.357; break;
+                    case 4: rate = -0.026; break;
+                    case 5: rate = -0.051; break;
                 }
                 break;
             case 4:
                 switch (rank) {
-                    case 1: rate = 0.357; break;
-                    case 2: rate = 0.178; break;
-                    case 3: rate = -0.178; break;
-                    case 4: rate = -0.357; break;
+                    case 1: rate = 0.051; break;
+                    case 2: rate = 0.026; break;
+                    case 3: rate = -0.026; break;
+                    case 4: rate = -0.051; break;
                 }
                 break;
             case 3:
                 switch (rank) {
-                    case 1: rate = 0.357; break;
+                    case 1: rate = 0.051; break;
                     case 2: rate = 0.0; break;
-                    case 3: rate = -0.357; break;
+                    case 3: rate = -0.051; break;
                 }
                 break;
             case 2:
                 switch (rank) {
-                    case 1: rate = 0.357; break;
-                    case 2: rate = -0.357; break;
+                    case 1: rate = 0.051; break;
+                    case 2: rate = -0.051; break;
                 }
                 break;
         }
