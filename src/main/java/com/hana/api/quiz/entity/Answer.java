@@ -1,6 +1,5 @@
 package com.hana.api.quiz.entity;
 
-import com.hana.common.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -11,14 +10,14 @@ import lombok.*;
 @Builder
 @ToString
 @Getter
-public class Answer extends BaseEntity {
+public class Answer {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "answer_id")
     private long id;
 
     @Column(nullable = false)
-    private String options;
+    private String choice;
 
     @Column(nullable = false)
     private boolean isCorrect;
