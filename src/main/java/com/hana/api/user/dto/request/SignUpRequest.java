@@ -20,6 +20,8 @@ public class SignUpRequest {
     private String phoneNumber;
     @NotEmpty
     private String identificationNumber;
+    @NotEmpty
+    private String deviceId;
 
     public User toEntity() {
         return User.builder()
@@ -29,6 +31,7 @@ public class SignUpRequest {
                 .phoneNumber(phoneNumber)
                 .status(0)
                 .userImg("") //TODO: 추후 수정필요
+                .deviceId(deviceId)
                 .identificationNumber(identificationNumber).build();
     }
 }
