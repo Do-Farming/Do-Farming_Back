@@ -87,8 +87,7 @@ public class AccountController {
             @ApiResponse(responseCode = "3300", description = "계좌이체 실패", content = @Content(schema = @Schema(implementation = BaseResponse.ErrorResult.class))),
     })
     @PostMapping("/simple")
-    public BaseResponse.SuccessResult<MakeTransactionDto> simpleTransfer(@Auth Long customerId,
-                                                                         @RequestBody MakeTransactionDto makeTransactionDto) {
+    public BaseResponse.SuccessResult<MakeTransactionDto> simpleTransfer(@RequestBody MakeTransactionDto makeTransactionDto) {
         log.info("계좌이체 시도 : {}", makeTransactionDto.toString());
         return BaseResponse.success(accountService.makeTransaction(makeTransactionDto));
     }
