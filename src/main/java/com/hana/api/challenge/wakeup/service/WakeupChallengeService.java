@@ -2,6 +2,7 @@ package com.hana.api.challenge.wakeup.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hana.api.challenge.wakeup.dto.WakeupResponseDto;
+import com.hana.api.challenge.wakeup.entity.WakeupChallenge;
 import com.hana.api.challenge.wakeup.repository.WakeupChallengeRepository;
 import com.hana.api.group.entity.Group;
 import com.hana.api.groupMember.repository.GroupMemberRepository;
@@ -15,6 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
@@ -57,6 +59,15 @@ public class WakeupChallengeService {
         String key = "wakeup:certificate:group:" + groupId + ":userId:" + userId;
         // Redis에 26시간 동안 유지
         redisTemplate.opsForValue().set(key, certificate, 26, TimeUnit.HOURS);
+
+        WakeupChallenge wakeupChallenge = WakeupChallenge.builder()
+                .wakeupDate(LocalDate.now())
+                .wakeupTime(LocalDateTime.now())
+                .group(Group.builder().id(groupId).build())
+                .user(user)
+                .build();
+
+        wakeupChallengeRepository.save(wakeupChallenge);
     }
 
     public List<WakeupResponseDto.WakeupCertificateDto> getWakeupTimesByGroupId(long groupId) {
