@@ -3,12 +3,12 @@ package com.hana.api.challenge.service;
 import com.hana.api.card.entity.Card;
 import com.hana.api.challenge.entity.ChallengeRecord;
 import com.hana.api.challenge.repository.ChallengRecordRepository;
+import com.hana.api.challenge.repository.ChallengeRecordRepository;
 import com.hana.api.firebase.service.PushNotificationService;
 import com.hana.api.group.entity.Group;
 import com.hana.api.group.repository.GroupRepository;
 import com.hana.api.groupMember.entity.GroupMember;
 import com.hana.api.groupMember.repository.GroupMemberRepository;
-import com.hana.api.user.entity.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -23,9 +23,16 @@ import java.util.List;
 public class ChallengeRecordService {
 
     final ChallengRecordRepository challengRecordRepository;
+    final ChallengeRecordRepository challengeRecordRepository;
     final GroupRepository groupRepository;
     final GroupMemberRepository groupMemberRepository;
     final PushNotificationService pushNotificationService;
+
+    public int getChallenge(){
+        return challengeRecordRepository.findByChallengeDate(LocalDate.now()).getChallengeType();
+    }
+
+
     @Transactional
     public int insertDailyChallengeRecord() {
         LocalDate today = LocalDate.now();
