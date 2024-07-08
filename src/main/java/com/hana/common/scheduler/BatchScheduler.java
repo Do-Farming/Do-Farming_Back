@@ -88,7 +88,7 @@ public class BatchScheduler {
         }
     }
 
-    @Scheduled(cron = "0 0 12 * * ?") // 매일 정오에 실행
+    @Scheduled(cron = "00 00 12 * * ?") // 매일 정오에 실행
     //@Scheduled(fixedRate = 30000)
     public void insertDailyChallenge() {
         try {
@@ -103,17 +103,22 @@ public class BatchScheduler {
     }
 
     // 일일 랭킹 계산
-    @Scheduled(cron = "0 42 13 * * ?") // 매일 오후 11시 50분에 실행
+    @Scheduled(cron = "30 25 16 * * ?") // 매일 오후 11시 50분에 실행
     public void calculateDailyRanks() {
         // 모든 그룹의 ID를 조회
-        List<Long> groupIds = groupRepository.findAllGroupIds();
-        for (Long groupId : groupIds) {
-            dailyRankService.calculateDailyRanks(groupId);
+        try {
+            Job job = jobRegistry.getJob("calculateDailyRanksJob");
+            JobParametersBuilder jobParam = new JobParametersBuilder()
+                    .addLocalDateTime("runAt", LocalDateTime.now());
+            jobLauncher.run(job, jobParam.toJobParameters());
+        } catch (NoSuchJobException | JobInstanceAlreadyCompleteException | JobExecutionAlreadyRunningException |
+                 JobParametersInvalidException | JobRestartException e) {
+            throw new RuntimeException(e);
         }
     }
 
     //WeeklyRate 매주 일요일 밤 11시 55분에 실행
-    @Scheduled(cron = "40 39 13 ? * THU") // 매일 정오에 실행
+    @Scheduled(cron = "45 33 14 * * ?") // 매일 정오에 실행
     public void insertWeeklyRate() {
         try {
             Job job = jobRegistry.getJob("insertWeeklyRateJob");

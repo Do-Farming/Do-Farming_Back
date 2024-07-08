@@ -2,9 +2,11 @@ package com.hana.api.depositsProduct.service;
 
 import com.hana.api.depositsProduct.dto.CheckingRequest;
 import com.hana.api.depositsProduct.dto.PreferenceInfo;
+import com.hana.api.depositsProduct.dto.response.DepositProductsResponse;
 import com.hana.api.depositsProduct.dto.response.DepositsProductResponse;
 import com.hana.api.depositsProduct.dto.response.GetListDepositsProductResponse;
 import com.hana.api.depositsProduct.entity.DepositsProduct;
+import com.hana.api.depositsProduct.entity.DepositsType;
 import com.hana.api.depositsProduct.repository.DepositsProductRepository;
 import com.hana.api.depositsProduct.util.DepositsProductUtil;
 import com.hana.common.aop.Preference;
@@ -97,14 +99,25 @@ public class DepositsProductService {
     }
 
     @Transactional
-    public List<GetListDepositsProductResponse> getList() {
+    public Map<DepositsType, List<DepositProductsResponse>> getList() {
         List<DepositsProduct> depositsProductList = depositsProductRepository.findAll();
+        if (depositsProductList.isEmpty()) {
+            throw new BaseException(BaseResponseStatus.EMPTY_DEPOSITS_PRODUCT);
+        }
+        return depositsProductList.stream()
+                .map(DepositProductsResponse::fromEntity)
+                .collect(Collectors.groupingBy(DepositProductsResponse::getType));
+    }
+
+    @Transactional
+    public List<DepositProductsResponse> getListByType(String type) {
+        List<DepositsProduct> depositsProductList = depositsProductRepository.findByType(type);
         if (depositsProductList.isEmpty()) {
             throw new BaseException(BaseResponseStatus.EMPTY_DEPOSITS_PRODUCT);
         }
         return depositsProductList
                 .stream()
-                .map(GetListDepositsProductResponse::fromEntity)
+                .map(DepositProductsResponse::fromEntity)
                 .collect(Collectors.toList());
     }
 
