@@ -38,16 +38,35 @@ public class DailyRankService {
     private final ChallengeRecordRepository challengeRecordRepository;
 
     @Transactional
-    public void calculateDailyRanks(Long groupId) {
-        List<User> users = groupRepository.findUsersByGroupId(groupId);
+    public void calculateDailyRanks() {
         LocalDate now = LocalDate.now();
+        ChallengeRecord challengeRecord = challengeRecordRepository.findByChallengeDate(now);
+        int challenge = challengeRecord.getChallengeType();
+        List<Long> groupIds = groupRepository.findAllGroupIds(now);
+        switch (challenge){
+            case 0:
+                // 걷기 순위 계산
+                for (Long groupId : groupIds) {
+                    List<User> users = groupRepository.findUsersByGroupId(groupId);
+                    calculateWalkingRanks(groupId, now, users);
+                }
+                break;
 
-        // 걷기 순위 계산
-        calculateWalkingRanks(groupId, now, users);
-        // 기상 순위 계산
-        calculateWakeupRanks(groupId, now, users);
-        // 퀴즈 순위 계산
-        calculateQuizRanks(groupId, now, users);
+            case 1:
+                // 기상 순위 계산
+                for (Long groupId : groupIds) {
+                    List<User> users = groupRepository.findUsersByGroupId(groupId);
+                    calculateWakeupRanks(groupId, now, users);
+                }
+                break;
+
+            case 2:
+                // 퀴즈 순위 계산
+                for (Long groupId : groupIds) {
+                    List<User> users = groupRepository.findUsersByGroupId(groupId);
+                    calculateQuizRanks(groupId, now, users);
+                }
+        }
     }
 
     private void calculateWalkingRanks(Long groupId, LocalDate now, List<User> users) {
