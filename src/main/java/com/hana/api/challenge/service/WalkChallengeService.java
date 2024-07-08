@@ -31,12 +31,14 @@ public class WalkChallengeService {
     private final DailyRankRepository dailyRankRepository;
     private final PedometerWebSocketHandler pedometerWebSocketHandler;
 
+    // 그룹의 만보기 데이터를 가져오는 메서드
     public List<PedometerResponse> getGroupPedometer(Long groupId) {
         List<WalkChallenge> walkChallenges = walkChallengeRepository.findByWalkDateAndGroupId(LocalDate.now(), groupId);
         if (walkChallenges.isEmpty()) {
             throw new IllegalArgumentException("No walk challenges found for the given group and date");
         }
 
+        // 각 사용자의 최신 WalkChallenge를 맵으로 변환
         Map<UUID, WalkChallenge> latestWalkChallenges = walkChallenges.stream()
                 .collect(Collectors.toMap(
                         wc -> wc.getUser().getUserCode(),
@@ -44,10 +46,14 @@ public class WalkChallengeService {
                         (wc1, wc2) -> wc1.getWalkDate().isAfter(wc2.getWalkDate()) ? wc1 : wc2
                 ));
 
+        // 최신 WalkChallenge 데이터를 기반으로 PedometerResponse 리스트 생성
         return latestWalkChallenges.values().stream()
                 .map(wc -> {
-                    DailyRank latestRank = dailyRankRepository.findLatestByUser(wc.getUser().getUserCode())
-                            .orElseThrow(() -> new IllegalArgumentException("No rank found for user with userCode: " + wc.getUser().getUserCode()));
+                    List<DailyRank> latestRanks = dailyRankRepository.findTop1ByUserOrderByDailyDateDesc(wc.getUser().getUserCode());
+                    if (latestRanks.isEmpty()) {
+                        throw new IllegalArgumentException("No rank found for user with userCode: " + wc.getUser().getUserCode());
+                    }
+                    DailyRank latestRank = latestRanks.get(0);
                     return new PedometerResponse(
                             wc.getUser().getName(),
                             wc.getStep(),
@@ -57,6 +63,7 @@ public class WalkChallengeService {
                 .collect(Collectors.toList());
     }
 
+    // WalkChallenge 데이터를 저장하는 메서드
     public void saveWalkChallenge(UUID userCode, int steps) {
         User user = userRepository.findByUserCode(userCode)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid user code: " + userCode));
@@ -78,9 +85,12 @@ public class WalkChallengeService {
 
         walkChallengeRepository.save(walkChallenge);
 
-        // Create a PedometerResponse and broadcast the update
-        DailyRank latestRank = dailyRankRepository.findLatestByUser(userCode)
-                .orElseThrow(() -> new IllegalArgumentException("No rank found for user with userCode: " + userCode));
+        // 사용자 별로 최신 DailyRank를 가져옵니다.
+        List<DailyRank> latestRanks = dailyRankRepository.findTop1ByUserOrderByDailyDateDesc(userCode);
+        if (latestRanks.isEmpty()) {
+            throw new IllegalArgumentException("No rank found for user with userCode: " + userCode);
+        }
+        DailyRank latestRank = latestRanks.get(0);
         PedometerResponse response = new PedometerResponse(user.getName(), steps, latestRank.getTotalRate());
 
         try {
