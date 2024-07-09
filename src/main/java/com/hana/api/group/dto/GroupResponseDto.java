@@ -88,11 +88,13 @@ public class GroupResponseDto {
     public static class GroupMemberDto {
         private long id;
         private String memberName;
+        private Integer memberProfile;
 
         public static GroupMemberDto from(GroupMember groupMember) {
             return GroupMemberDto.builder()
                     .id(groupMember.getGroup().getId())
                     .memberName(groupMember.getUser().getName())
+                    .memberProfile(groupMember.getUser().getUserImg())
                     .build();
         }
     }
