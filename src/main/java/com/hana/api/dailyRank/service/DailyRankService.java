@@ -199,32 +199,32 @@ public class DailyRankService {
         switch (userCount) {
             case 5:
                 switch (rank) {
-                    case 1: rate = 0.051; break;
-                    case 2: rate = 0.026; break;
+                    case 1: rate = 0.357; break;
+                    case 2: rate = 0.182; break;
                     case 3: rate = 0.0; break;
-                    case 4: rate = -0.026; break;
-                    case 5: rate = -0.051; break;
+                    case 4: rate = -0.182; break;
+                    case 5: rate = -0.357; break;
                 }
                 break;
             case 4:
                 switch (rank) {
-                    case 1: rate = 0.051; break;
-                    case 2: rate = 0.026; break;
-                    case 3: rate = -0.026; break;
-                    case 4: rate = -0.051; break;
+                    case 1: rate = 0.357; break;
+                    case 2: rate = 0.182; break;
+                    case 3: rate = -0.182; break;
+                    case 4: rate = -0.357; break;
                 }
                 break;
             case 3:
                 switch (rank) {
-                    case 1: rate = 0.051; break;
+                    case 1: rate = 0.357; break;
                     case 2: rate = 0.0; break;
-                    case 3: rate = -0.051; break;
+                    case 3: rate = -0.357; break;
                 }
                 break;
             case 2:
                 switch (rank) {
-                    case 1: rate = 0.051; break;
-                    case 2: rate = -0.051; break;
+                    case 1: rate = 0.357; break;
+                    case 2: rate = -0.357; break;
                 }
                 break;
         }

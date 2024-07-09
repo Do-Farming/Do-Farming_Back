@@ -104,7 +104,7 @@ public class OpenAiService {
                     conversation.add(assistantMessage);
 
                     // 대화 저장
-                    redisTemplate.opsForValue().set(conversationCacheKey, conversation, Duration.ofMinutes(15));
+                    redisTemplate.opsForValue().set(conversationCacheKey, conversation, Duration.ofHours(1));
                     // 응답 캐시 저장
                     redisTemplate.opsForValue().set(cacheKey, response, Duration.ofHours(1));
                 })
