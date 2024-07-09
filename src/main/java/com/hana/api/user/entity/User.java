@@ -43,7 +43,8 @@ public class User extends BaseEntity {
     @Column(unique = true, nullable = true)
     private String deviceId;
 
-    private String userImg;
+    @Column(nullable = false)
+    private Integer userImg;
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     @ToString.Exclude

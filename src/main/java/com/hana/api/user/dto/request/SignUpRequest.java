@@ -4,6 +4,7 @@ import com.hana.api.user.entity.User;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.*;
 
+import java.util.Random;
 import java.util.UUID;
 
 @Getter
@@ -24,14 +25,19 @@ public class SignUpRequest {
     private String deviceId;
 
     public User toEntity() {
+
+        Random random = new Random();
+        int randomImg = 1 + random.nextInt(4);
+
         return User.builder()
                 .userCode(UUID.randomUUID())
                 .name(name)
                 .password(password)
                 .phoneNumber(phoneNumber)
                 .status(0)
-                .userImg("") //TODO: 추후 수정필요
+                .userImg(randomImg)
                 .deviceId(deviceId)
-                .identificationNumber(identificationNumber).build();
+                .identificationNumber(identificationNumber).
+                build();
     }
 }
