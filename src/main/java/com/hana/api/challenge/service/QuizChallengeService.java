@@ -1,6 +1,9 @@
 package com.hana.api.challenge.service;
 
 import com.hana.api.challenge.dto.response.QuizResponseDto;
+import com.hana.api.challenge.entity.QuizChallenge;
+import com.hana.api.challenge.repository.QuizChallengeRepository;
+import com.hana.api.group.entity.Group;
 import com.hana.api.groupMember.repository.GroupMemberRepository;
 import com.hana.api.user.entity.User;
 import com.hana.api.user.repository.UserRepository;
@@ -12,6 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
@@ -23,6 +27,7 @@ public class QuizChallengeService {
     private final RedisTemplate<String, Object> redisTemplate;
     private final UserRepository userRepository;
     private final GroupMemberRepository groupMemberRepository;
+    private final QuizChallengeRepository quizChallengeRepository;
     private static final String QUIZ_TIME_KEY = "quizTime:";
 
     public void storeQuizChallengeData(UUID userCode, int score, long completionTime) {
@@ -37,5 +42,15 @@ public class QuizChallengeService {
         String key = QUIZ_TIME_KEY + userId;
         QuizResponseDto quizResponseDto = new QuizResponseDto(score, completionTime);
         redisTemplate.opsForValue().set(key, quizResponseDto, 26, TimeUnit.HOURS);
+
+        QuizChallenge quizChallenge = QuizChallenge.builder()
+                .quizDate(LocalDate.now())
+                .quizScore(score)
+                .quizTimes(completionTime)
+                .group(Group.builder().id(groupId).build())
+                .user(user)
+                .build();
+
+        quizChallengeRepository.save(quizChallenge);
     }
 }
