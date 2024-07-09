@@ -55,7 +55,10 @@ public class ChallengeRecordService {
         }
         List<Group> groups = groupRepository.findActiveGroup(LocalDate.now());
         for(Group g : groups){
-            log.info(g.toString());
+            String wakeUp = g.getWakeupTime();
+            if (randomNumber == 1){
+                challenge += ". Your group's Time is at " + wakeUp;
+            }
             List<GroupMember> groupMembers = groupMemberRepository.findGroupMemberByGroupId(g.getId());
             for(GroupMember gm : groupMembers){
                 String deviceId = gm.getUser().getDeviceId();
