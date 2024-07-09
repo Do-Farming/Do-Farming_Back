@@ -11,11 +11,11 @@ import java.util.UUID;
 public class MyInfoResponse {
     private UUID userCode;
     private String name;
-    private Integer user_img;
+    private Integer userImg;
 
     public MyInfoResponse(User user) {
         this.userCode = user.getUserCode();
         this.name = user.getName();
-        this.user_img = user.getUserImg();
+        this.userImg = user.getUserImg();
     }
 }
